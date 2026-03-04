@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ghxxxhv8n7tf"
-path="res://.godot/imported/itch run-Sheet sheet.png-2d0305ef9c0b178639a034852ef5f279.ctex"
+uid="uid://cmtytr3bt3d7s"
+path="res://.godot/imported/idle.png-4fd086e60f9db5db4aaa1e072a02449d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/itch run-Sheet sheet.png"
-dest_files=["res://.godot/imported/itch run-Sheet sheet.png-2d0305ef9c0b178639a034852ef5f279.ctex"]
+source_file="res://assets/player-sprites/idle.png"
+dest_files=["res://.godot/imported/idle.png-4fd086e60f9db5db4aaa1e072a02449d.ctex"]
 
 [params]
 

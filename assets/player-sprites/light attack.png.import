@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyx1mk7jo5afl"
-path="res://.godot/imported/itch hurt 2 sheet-Sheet.png-fd9f80f6805770ca1260c132b189640c.ctex"
+uid="uid://drtcd5vy76few"
+path="res://.godot/imported/light attack.png-8ed09a14218949221c06df12f630c3f5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/itch hurt 2 sheet-Sheet.png"
-dest_files=["res://.godot/imported/itch hurt 2 sheet-Sheet.png-fd9f80f6805770ca1260c132b189640c.ctex"]
+source_file="res://assets/player-sprites/light attack.png"
+dest_files=["res://.godot/imported/light attack.png-8ed09a14218949221c06df12f630c3f5.ctex"]
 
 [params]
 

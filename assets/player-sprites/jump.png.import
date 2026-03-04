@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmovwbj4av8xt"
-path="res://.godot/imported/itch jump sheet-Sheet.png-6fb9c6b49e874adf7c7b4cef1ee9e6f6.ctex"
+uid="uid://nx5fmuf0q1fn"
+path="res://.godot/imported/jump.png-5ec10ed13b500b0e347610e1bc3cb1a9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/itch jump sheet-Sheet.png"
-dest_files=["res://.godot/imported/itch jump sheet-Sheet.png-6fb9c6b49e874adf7c7b4cef1ee9e6f6.ctex"]
+source_file="res://assets/player-sprites/jump.png"
+dest_files=["res://.godot/imported/jump.png-5ec10ed13b500b0e347610e1bc3cb1a9.ctex"]
 
 [params]
 

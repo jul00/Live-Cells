@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://g28vpnmh2pdp"]
+
+[ext_resource type="Script" uid="uid://duf0d82rbwd2q" path="res://scenes/player/player_controls.gd" id="1_dovo2"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8afob"]
+load_path = "res://.godot/imported/idle.png-4fd086e60f9db5db4aaa1e072a02449d.ctex"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gmlin"]
+radius = 5.0
+height = 31.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1425621716]
+script = ExtResource("1_dovo2")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1012771223]
+zoom = Vector2(2, 2)
+
+[node name="GFX" type="Node2D" parent="." unique_id=2024050295]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="GFX" unique_id=663093678]
+root_node = NodePath("../..")
+
+[node name="Sprite2D" type="Sprite2D" parent="GFX" unique_id=416498192]
+position = Vector2(-1, 0)
+texture = SubResource("CompressedTexture2D_8afob")
+region_enabled = true
+region_rect = Rect2(12, 27, 32, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=71895162]
+shape = SubResource("CapsuleShape2D_gmlin")

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://crwvcbyvtnb3w"
-path="res://.godot/imported/red hood itch free Copy-Sheet.png-f36372c606c9cd9558fdf6ff8eea676f.ctex"
+uid="uid://bul5kt1buhtvh"
+path="res://.godot/imported/run turnaround.png-b5f4ddf2622dd25e70f5b3b65d012922.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/red hood itch free Copy-Sheet.png"
-dest_files=["res://.godot/imported/red hood itch free Copy-Sheet.png-f36372c606c9cd9558fdf6ff8eea676f.ctex"]
+source_file="res://assets/player-sprites/run turnaround.png"
+dest_files=["res://.godot/imported/run turnaround.png-b5f4ddf2622dd25e70f5b3b65d012922.ctex"]
 
 [params]
 

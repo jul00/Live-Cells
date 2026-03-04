@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkrxho0wpgi3e"
-path="res://.godot/imported/itch light atk sheet-Sheet.png-5307376376e67ed5fc339a543dc25fd8.ctex"
+uid="uid://djkgihe1djywh"
+path="res://.godot/imported/run.png-1667c74cd2737f72391db4647cfc0805.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/itch light atk sheet-Sheet.png"
-dest_files=["res://.godot/imported/itch light atk sheet-Sheet.png-5307376376e67ed5fc339a543dc25fd8.ctex"]
+source_file="res://assets/player-sprites/run.png"
+dest_files=["res://.godot/imported/run.png-1667c74cd2737f72391db4647cfc0805.ctex"]
 
 [params]
 

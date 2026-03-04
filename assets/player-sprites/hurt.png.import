@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wcojq3a7fxwx"
-path="res://.godot/imported/idle sheet-Sheet.png-482b3f150cc50d0047694831ad8eae61.ctex"
+uid="uid://b8wf2vdhuvrx5"
+path="res://.godot/imported/hurt.png-7c8f95444d3da1df46c74b7083ce31aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/idle sheet-Sheet.png"
-dest_files=["res://.godot/imported/idle sheet-Sheet.png-482b3f150cc50d0047694831ad8eae61.ctex"]
+source_file="res://assets/player-sprites/hurt.png"
+dest_files=["res://.godot/imported/hurt.png-7c8f95444d3da1df46c74b7083ce31aa.ctex"]
 
 [params]
 
