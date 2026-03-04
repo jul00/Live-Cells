@@ -733,7 +733,7 @@ script = ExtResource("2_p47bc")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PlayerAnimator" unique_id=883748146]
 position = Vector2(-42.5, -40)
 sprite_frames = SubResource("SpriteFrames_8ydkj")
-animation = &"Normal3"
+animation = &"Falling"
 autoplay = "Idle"
 speed_scale = 1.5
 centered = false
