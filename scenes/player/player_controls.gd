@@ -17,6 +17,10 @@ func _physics_process(delta):
 	# Apply gravity only if attack handler allows
 	if not is_on_floor() and not attack_handler.is_air_attacking_check():
 		velocity += get_gravity() * delta
+		if velocity.y > 0:
+			animator.play_fall() # Trigger the falling animation
+		else:
+			animator.play_jump() 
 
 	# If attacking, stop movement
 	if attack_handler.is_busy():
@@ -27,6 +31,7 @@ func _physics_process(delta):
 	var direction : float = input_handler.get_move_direction()
 
 	if is_on_floor():
+		velocity.y = 0
 		if direction:
 			velocity.x = direction * movespeed
 			animator.play_run()
@@ -40,5 +45,8 @@ func _physics_process(delta):
 	if input_handler.jump_pressed() and is_on_floor():
 		velocity.y = jump_velocity
 		animator.play_jump()
+	#Short hop
+	if input_handler.jump_released() and velocity.y < 0:
+		velocity.y = jump_velocity / 4
 
 	move_and_slide()

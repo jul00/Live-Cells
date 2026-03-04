@@ -5,6 +5,9 @@ func get_move_direction() -> float:
 
 func jump_pressed() -> bool:
 	return Input.is_action_just_pressed("jump")
+	
+func jump_released() -> bool:
+	return Input.is_action_just_released("jump")
 
 func attack_pressed() -> bool:
 	return Input.is_action_just_pressed("normal-attack")
