@@ -7,6 +7,9 @@ func play_idle():
 
 func play_run():
 	animated_sprite.play("Running")
+	
+func play_dash():
+	animated_sprite.play("Dashing")
 
 func play_jump():
 	animated_sprite.play("Jumping")
@@ -22,6 +25,15 @@ func play_norm2():
 
 func play_norm3():
 	animated_sprite.play("Normal3")
+
+func play_norm_up():
+	animated_sprite.play("NormalUp")
+
+func play_air_norm_down():
+	animated_sprite.play("AirNormalDown")
+
+func play_neutral_special():
+	animated_sprite.play("NeutralSpecial")
 
 func set_facing(direction: float):
 	if direction > 0:

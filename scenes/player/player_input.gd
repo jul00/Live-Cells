@@ -11,3 +11,9 @@ func jump_released() -> bool:
 
 func attack_pressed() -> bool:
 	return Input.is_action_just_pressed("normal-attack")
+
+func special_pressed() -> bool:
+	return Input.is_action_just_pressed("special")
+
+func dash_pressed() -> bool:
+	return Input.is_action_just_pressed("dash")
