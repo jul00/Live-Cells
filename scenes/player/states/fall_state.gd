@@ -1,4 +1,4 @@
-extends "res://scenes/player/player_state.gd"
+extends PlayerState
 
 func enter():
 	super()
@@ -25,7 +25,7 @@ func physics_update(delta: float):
 	)
 	
 	if player.input_handler.attack_pressed():
-		state_machine.change_state(state_machine.get_node("Attack"))
+		state_machine.change_state(state_machine.get_node("AttackHandler"))
 		return
 		
 	if player.is_on_floor():

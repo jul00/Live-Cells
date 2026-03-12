@@ -6,7 +6,7 @@ var current_state
 func _ready() -> void:
 	await get_tree().process_frame
 	
-	current_state = get_child(0)
+	current_state = get_node("Idle")
 	current_state.enter()
 	#change_state(get_node("Idle"))
 	

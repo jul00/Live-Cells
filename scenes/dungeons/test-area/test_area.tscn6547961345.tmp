@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://c8fi3yx2a08p4" path="res://assets/dungeon1-sprites/TX Tileset Ground.png" id="1_nq7y3"]
 [ext_resource type="PackedScene" uid="uid://g28vpnmh2pdp" path="res://scenes/player/player.tscn" id="2_ba3li"]
-[ext_resource type="Script" uid="uid://cd6whckj2y23j" path="res://scenes/dungeons/test-area/area_2d.gd" id="3_535eq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ba3li"]
 texture = ExtResource("1_nq7y3")
@@ -711,9 +710,6 @@ physics_layer_0/collision_layer = 7
 physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_ba3li")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_535eq"]
-size = Vector2(92, 144)
-
 [node name="TestArea" type="Node2D" unique_id=1200663079]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1307336621]
@@ -725,13 +721,3 @@ layer_0/tile_data = PackedInt32Array(0, 65536, 0, 65536, 65536, 1, 131072, 65536
 [node name="Player" parent="." unique_id=1425621716 instance=ExtResource("2_ba3li")]
 collision_layer = 2
 collision_mask = 5
-
-[node name="Area2D" type="Area2D" parent="." unique_id=304169436]
-collision_layer = 4
-collision_mask = 32
-script = ExtResource("3_535eq")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1947837098]
-position = Vector2(225, -68)
-shape = SubResource("RectangleShape2D_535eq")
-debug_color = Color(0.9999998, 0.012140645, 0.05033476, 0.41960785)

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AttackFrameData" format=3 uid="uid://di1jb7s231uff"]
+
+[ext_resource type="Script" uid="uid://bddpolynamjoj" path="res://scenes/player/attacks/attack_frame_data.gd" id="1_srbc3"]
+
+[resource]
+script = ExtResource("1_srbc3")
+startup_frames = Array[int]([0, 1, 2, 3, 4, 5])
+active_frames = Array[int]([6, 7, 8, 9, 10])
+recovery_frames = Array[int]([11, 12, 13, 14, 15, 16])
+metadata/_custom_type_script = "uid://bddpolynamjoj"

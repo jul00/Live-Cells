@@ -1,4 +1,4 @@
-extends "res://scenes/player/player_state.gd"
+extends PlayerState
 
 func enter():
 	super()
