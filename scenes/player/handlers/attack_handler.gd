@@ -28,22 +28,11 @@ var attack_slide_speed = 50.0
 var attack_slide_time = 0.15
 var attack_slide_multiplier = 1
 
-func _physics_process(delta):
-	var horizontal: float = input_handler.get_move_direction()
-	var vertical: float = Input.get_axis("up", "crouch")
-	print("horizontal: ", horizontal)
-	print("vertical: ", vertical)
-	print("combo window: ", combo_window_frames)
-	print("recovery frames: ", recovery_frames)
-	
-	if input_handler.attack_pressed():
-		handle_attack_input(horizontal, vertical)
-	elif input_handler.special_pressed():
-		handle_ground_special()
-	
-	if player.is_dashing and Input.is_action_just_pressed("normal-attack"):
-		player.is_dashing = false
-		handle_attack_input(horizontal, vertical)
+func request_attack():
+	var horizontal = input_handler.get_move_direction()
+	var vertical = input_handler.get_vertical_direction()
+
+	handle_attack_input(horizontal, vertical)
 
 func handle_attack_input(horizontal, vertical):
 	if player.is_on_floor():
@@ -283,21 +272,19 @@ func is_air_attacking_check():
 func reset_ground_combo(recovery_frames):
 	is_ground_attacking = false
 	combo_step = 0
-	trigger_recovery(recovery_frames)
-	
+	await trigger_recovery(recovery_frames)
 	reset_frame_data()
 
 func reset_air_combo(recovery_frames):
 	is_air_attacking = false
 	air_combo_step = 0
-	trigger_recovery(recovery_frames)
-	
+	await trigger_recovery(recovery_frames)
 	reset_frame_data()
 
 func open_combo_window(combo_window_frames):
 	can_chain = true
 
-	for i in combo_window_frames:
+	for i in range(combo_window_frames):
 		await get_tree().physics_frame
 
 	can_chain = false
@@ -305,7 +292,7 @@ func open_combo_window(combo_window_frames):
 func trigger_recovery(recovery_frames):
 	is_recovering = true
 
-	for i in recovery_frames:
+	for i in range(recovery_frames):
 		await get_tree().physics_frame
 
 	is_recovering = false

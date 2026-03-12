@@ -20,7 +20,6 @@
 [ext_resource type="Script" uid="uid://bydcipqwd60w2" path="res://scenes/player/states/jump_state.gd" id="16_myrg7"]
 [ext_resource type="Script" uid="uid://cpjdqii1abwim" path="res://scenes/player/states/fall_state.gd" id="17_kvlxm"]
 [ext_resource type="Script" uid="uid://b7or3xrnih8vf" path="res://scenes/player/states/attack_state.gd" id="18_uf5tr"]
-[ext_resource type="Script" uid="uid://cdku8rd42gpvo" path="res://scenes/player/states/air_dash_state.gd" id="19_ioxgp"]
 [ext_resource type="Script" uid="uid://ku318vx637vb" path="res://scenes/player/states/dash_state.gd" id="19_lgqa7"]
 [ext_resource type="Script" uid="uid://bi306dovsrko6" path="res://scenes/player/states/land_state.gd" id="21_yj68g"]
 
@@ -218,7 +217,15 @@ region = Rect2(1440, 0, 62, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q3ejk"]
 atlas = ExtResource("3_lvxji")
+region = Rect2(1200, 0, 62, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2dxln"]
+atlas = ExtResource("3_lvxji")
 region = Rect2(1280, 0, 62, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gsldg"]
+atlas = ExtResource("3_lvxji")
+region = Rect2(1360, 0, 62, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pq1ih"]
 atlas = ExtResource("5_5gtgg")
@@ -681,29 +688,29 @@ animations = [{
 "texture": SubResource("AtlasTexture_q3ejk")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_2dxln")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_2dxln")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_2dxln")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_2dxln")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_gsldg")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_gsldg")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ejk")
+"texture": SubResource("AtlasTexture_gsldg")
 }],
 "loop": false,
 "name": &"Land",
-"speed": 10.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -964,7 +971,7 @@ collision_mask = 2
 script = ExtResource("1_dovo2")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1012771223]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(2, 2)
 
 [node name="PlayerAnimator" type="Node2D" parent="." unique_id=619415639]
 position = Vector2(11.5, -19)
@@ -974,6 +981,7 @@ script = ExtResource("2_p47bc")
 position = Vector2(-42.5, -40)
 sprite_frames = SubResource("SpriteFrames_8ydkj")
 animation = &"Land"
+frame = 5
 frame_progress = 1.0
 speed_scale = 1.5
 centered = false
@@ -1009,9 +1017,6 @@ script = ExtResource("16_8ydkj")
 
 [node name="Dash" type="Node" parent="StateMachine" unique_id=1540333019]
 script = ExtResource("19_lgqa7")
-
-[node name="AirDash" type="Node" parent="StateMachine" unique_id=537926790]
-script = ExtResource("19_ioxgp")
 
 [node name="Jump" type="Node" parent="StateMachine" unique_id=424654009]
 script = ExtResource("16_myrg7")

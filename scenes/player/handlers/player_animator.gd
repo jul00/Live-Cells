@@ -8,6 +8,9 @@ func play_idle():
 func play_run():
 	animated_sprite.play("Running")
 	
+func play_skid():
+	animated_sprite.play("Skid")
+	
 func play_dash():
 	animated_sprite.play("Dashing")
 
@@ -16,6 +19,9 @@ func play_jump():
 
 func play_fall():
 	animated_sprite.play("Falling")
+	
+func play_land():
+	animated_sprite.play("Land")
 
 func play_norm1():
 	animated_sprite.play("Normal1")
