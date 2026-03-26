@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://6uyfg0s1peb6"]
+
+[ext_resource type="Texture2D" uid="uid://cuo5ntln3aw54" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-back-trees.png" id="1_vu0s6"]
+[ext_resource type="Texture2D" uid="uid://ltw1m5tgj6u3" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-lights.png" id="2_5iflt"]
+[ext_resource type="Texture2D" uid="uid://bism7ftyj56ui" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-middle-trees.png" id="3_6gced"]
+[ext_resource type="Texture2D" uid="uid://bw5bs67x88gli" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-front-trees.png" id="4_7rria"]
+
+[node name="Parallax BG" type="Node2D" unique_id=2080721614]
+scale = Vector2(10, 10)
+
+[node name="Layer 1" type="Parallax2D" parent="." unique_id=1022292115]
+
+[node name="Sprite2D" type="Sprite2D" parent="Layer 1" unique_id=1265286735]
+texture = ExtResource("1_vu0s6")
+
+[node name="Layer 2" type="Parallax2D" parent="." unique_id=335065077]
+
+[node name="Sprite2D" type="Sprite2D" parent="Layer 2" unique_id=1575642653]
+texture = ExtResource("2_5iflt")
+
+[node name="Layer 3" type="Parallax2D" parent="." unique_id=776469699]
+
+[node name="Sprite2D" type="Sprite2D" parent="Layer 3" unique_id=45417093]
+texture = ExtResource("3_6gced")
+
+[node name="Layer 4" type="Parallax2D" parent="." unique_id=1032655037]
+
+[node name="Sprite2D" type="Sprite2D" parent="Layer 4" unique_id=2001381507]
+texture = ExtResource("4_7rria")
