@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dimafc6ov5tfj"]
 
+[ext_resource type="Script" uid="uid://da8r5qxtdrx3n" path="res://scenes/lvl_s_1.gd" id="1_jys7t"]
 [ext_resource type="Texture2D" uid="uid://bc84w30smwheo" path="res://assets/Forest Set/TX Tileset Ground.png" id="1_yh7b8"]
 [ext_resource type="Texture2D" uid="uid://cacm00ghe2gfv" path="res://assets/Forest Set/TX Village Props.png" id="2_apicl"]
 [ext_resource type="Texture2D" uid="uid://gxavd584m00f" path="res://assets/Castle Set/Dungeon Tile Set.png" id="3_u24uh"]
@@ -8,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://ltw1m5tgj6u3" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-lights.png" id="6_jys7t"]
 [ext_resource type="Texture2D" uid="uid://bism7ftyj56ui" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-middle-trees.png" id="7_yvfqn"]
 [ext_resource type="Texture2D" uid="uid://bw5bs67x88gli" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-front-trees.png" id="8_bjg1s"]
+[ext_resource type="PackedScene" uid="uid://btmchbcwdjuqd" path="res://scenes/enemy.tscn" id="10_yvfqn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dh1pd"]
 texture = ExtResource("1_yh7b8")
@@ -656,6 +658,7 @@ physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_lnhlr")
 
 [node name="lvlS1" type="Node2D" unique_id=570265452]
+script = ExtResource("1_jys7t")
 
 [node name="forest" type="TileMap" parent="." unique_id=471692867]
 tile_set = SubResource("TileSet_r56o1")
@@ -715,3 +718,7 @@ screen_offset = Vector2(8400, 100000)
 
 [node name="Sprite2D" type="Sprite2D" parent="Parallax2D/Layer 4" unique_id=956713413]
 texture = ExtResource("8_bjg1s")
+
+[node name="Enemy1" parent="." unique_id=1227017819 instance=ExtResource("10_yvfqn")]
+position = Vector2(1381, -28)
+scale = Vector2(1.5, 1.5)

@@ -10,6 +10,9 @@ var noclip := false
 @onready var animated_sprite = $AnimatedSprite2D
 @onready var hitbox = $CollisionShape2D
 
+func _ready():
+	add_to_group("player")
+
 func _physics_process(delta: float) -> void:
 
 	var direction := Input.get_axis("a", "d")
