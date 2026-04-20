@@ -16,7 +16,7 @@ func physics_update(delta: float):
 		player.velocity.y = player.jump_velocity / 20
 	
 	if player.input_handler.attack_pressed():
-		state_machine.change_state(state_machine.get_node("Attack"))
+		state_machine.change_state(state_machine.get_node("AttackHandler"))
 		return
 		
 	if player.velocity.y > 0:

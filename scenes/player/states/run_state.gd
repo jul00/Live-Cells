@@ -25,7 +25,7 @@ func physics_update(delta: float) -> void:
 		return
 	
 	if player.input_handler.attack_pressed():
-		state_machine.change_state(state_machine.get_node("Attack"))
+		state_machine.change_state(state_machine.get_node("AttackHandler"))
 		return
 	
 	if player.input_handler.jump_pressed():
