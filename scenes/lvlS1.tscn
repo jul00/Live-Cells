@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://bism7ftyj56ui" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-middle-trees.png" id="7_yvfqn"]
 [ext_resource type="Texture2D" uid="uid://bw5bs67x88gli" path="res://assets/Forest Set/parallax_forest_pack web/v1/layers/parallax-forest-front-trees.png" id="8_bjg1s"]
 [ext_resource type="PackedScene" uid="uid://btmchbcwdjuqd" path="res://scenes/enemy.tscn" id="10_yvfqn"]
+[ext_resource type="PackedScene" uid="uid://dwryhjxcg2f3f" path="res://scenes/enemy_2.tscn" id="11_bjg1s"]
+[ext_resource type="Script" uid="uid://c31krdc30os13" path="res://scripts/enemy_2.gd" id="12_qaj16"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dh1pd"]
 texture = ExtResource("1_yh7b8")
@@ -722,3 +724,8 @@ texture = ExtResource("8_bjg1s")
 [node name="Enemy1" parent="." unique_id=1227017819 instance=ExtResource("10_yvfqn")]
 position = Vector2(1381, -28)
 scale = Vector2(1.5, 1.5)
+
+[node name="Enemy2" parent="." unique_id=1608169773 instance=ExtResource("11_bjg1s")]
+position = Vector2(3088, -661)
+scale = Vector2(2, 2)
+script = ExtResource("12_qaj16")
