@@ -18,9 +18,19 @@ config/icon="res://icon.svg"
 
 MCPRuntime="*uid://b01pd32wbxrxj"
 
+[display]
+
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+
+[global_group]
+
+player=""
+enemy=""
 
 [input]
 

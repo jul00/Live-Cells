@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends CombatEntity
 
 const SPEED = 150.0
 const JUMP_VELOCITY = -320.0
@@ -13,8 +13,6 @@ const WALL_JUMP_PUSH = 200.0
 enum State { MOVE, JUMP, ATTACK, DASH, DEFEND, HURT, DEATH, WALL }
 var current_state = State.MOVE
 
-@onready var sprite = $AnimatedSprite2D
-
 var combo_step = -1
 var next_attack_queued = false
 var combo_grace_timer = 0.0
@@ -22,9 +20,19 @@ var attack_animations = ["atk1", "atk2", "atk3"]
 var can_dash = true
 
 func _ready():
+	super._ready()
+	hitbox_profiles = {
+		"atk1": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
+		"atk2": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
+		"atk3": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
+		"air-atk": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
+		"special-atk": {"pos": Vector2(30, -17.5), "size": Vector2(40, 40), "damage": 100.0}
+	}
+	add_to_group("player")
 	sprite.animation_finished.connect(_on_animation_finished)
 
 func _physics_process(delta: float) -> void:
+
 	if current_state == State.DEATH:
 		return
 
@@ -61,7 +69,7 @@ func _physics_process(delta: float) -> void:
 		elif not is_on_wall():
 			change_state(State.JUMP)
 
-	if current_state == State.MOVE or current_state == State.JUMP or current_state == State.WALL:
+	if current_state == State.MOVE or current_state == State.JUMP or current_state == State.WALL or current_state == State.DEFEND:
 		handle_movement_input(delta)
 	
 	handle_combat_input()
@@ -77,8 +85,8 @@ func change_state(new_state: State, anim_name: String = ""):
 		next_attack_queued = false
 	
 	current_state = new_state
-	if new_state == State.ATTACK or new_state == State.DEFEND:
-		velocity.x = 0
+	if new_state in [State.ATTACK, State.DEFEND, State.HURT, State.DEATH]:
+		velocity = Vector2.ZERO
 	if anim_name != "":
 		sprite.play(anim_name)
 		return
@@ -103,10 +111,17 @@ func change_state(new_state: State, anim_name: String = ""):
 		State.WALL:
 			sprite.play("wall-contact")
 
-func receive_hit(damage: float):
+func receive_hit(damage: float, attacker: Node2D):
+	if current_state == State.DASH:
+		# Player is invincible while dashing
+		print("Invincible during dash!")
+		return 0.0
+		
 	if current_state == State.DEFEND:
-		# Block the hit: play the animation and reduce damage
+		# Block the hit: play the animation and ensure velocity is zero
 		sprite.play("defend")
+		velocity = Vector2.ZERO
+		
 		print("Blocked! Damage reduced.")
 		# For now, we just reduce damage by 80%
 		return damage * 0.2
@@ -116,34 +131,42 @@ func receive_hit(damage: float):
 		return damage
 
 func handle_movement_input(delta: float):
-	if Input.is_action_just_pressed("Jump"):
-		if current_state == State.WALL:
-			var wall_normal = get_wall_normal()
-			velocity = Vector2(wall_normal.x * WALL_JUMP_PUSH, JUMP_VELOCITY)
-			sprite.flip_h = wall_normal.x > 0
-			change_state(State.JUMP, "wall-jump")
-			return
-		elif is_on_floor():
-			velocity.y = JUMP_VELOCITY
-			change_state(State.JUMP)
+	if current_state != State.DEFEND:
+		if Input.is_action_just_pressed("Jump"):
+			if current_state == State.WALL:
+				var wall_normal = get_wall_normal()
+				velocity = Vector2(wall_normal.x * WALL_JUMP_PUSH, JUMP_VELOCITY)
+				sprite.flip_h = wall_normal.x > 0
+				update_combat_facing()
+				change_state(State.JUMP, "wall-jump")
+				return
+			elif is_on_floor():
+				velocity.y = JUMP_VELOCITY
+				change_state(State.JUMP)
 
-	var direction := Input.get_axis("A", "D")
-	if direction:
-		if current_state != State.WALL:
-			sprite.flip_h = direction < 0
-		
-		if is_on_floor():
-			velocity.x = direction * SPEED
-		else:
-			# Air acceleration to preserve jump momentum
-			velocity.x = move_toward(velocity.x, direction * SPEED, 1500.0 * delta)
-	else:
-		var friction = SPEED if is_on_floor() else 800.0 * delta
-		velocity.x = move_toward(velocity.x, 0, friction)
+		var direction := Input.get_axis("A", "D")
+		if direction:
+			if current_state != State.WALL:
+				if sprite.flip_h != (direction < 0):
+					sprite.flip_h = direction < 0
+					update_combat_facing()
+
+			if is_on_floor():
+				velocity.x = direction * SPEED
+			else:
+				# Air acceleration to preserve jump momentum
+				velocity.x = move_toward(velocity.x, direction * SPEED, 1500.0 * delta)
+			return # Skip friction if actively moving
+
+	# Apply friction. We use a lower friction multiplier if blocking to allow knockback to be felt.
+	var friction_multiplier = 0.5 if current_state == State.DEFEND else 1.0
+	var friction = (SPEED if is_on_floor() else 800.0 * delta) * friction_multiplier
+	velocity.x = move_toward(velocity.x, 0, friction)
 
 func attack():
 	if current_state == State.JUMP:
 		change_state(State.ATTACK, "air-atk")
+		activate_hitbox("air-atk", true)
 		return
 
 	# If we are not currently attacking, check if the grace timer is still active
@@ -151,10 +174,12 @@ func attack():
 		if combo_grace_timer <= 0:
 			combo_step = -1
 		next_attack_queued = false
-	
+
 	combo_step = (combo_step + 1) % attack_animations.size()
 	combo_grace_timer = COMBO_GRACE_TIME
-	change_state(State.ATTACK, attack_animations[combo_step])
+	var anim = attack_animations[combo_step]
+	change_state(State.ATTACK, anim)
+	activate_hitbox(anim, true)
 
 func handle_combat_input():
 	if Input.is_action_just_pressed("attack"):
@@ -162,9 +187,10 @@ func handle_combat_input():
 			next_attack_queued = true
 		else:
 			attack()
-	
+
 	if Input.is_action_just_pressed("special-attack"):
 		change_state(State.ATTACK, "special-atk")
+		activate_hitbox("special-atk", true)
 		next_attack_queued = false
 		combo_step = -1
 
@@ -173,10 +199,10 @@ func handle_combat_input():
 		var dash_dir = -1 if sprite.flip_h else 1
 		velocity.x = dash_dir * dash_speed
 		velocity.y = 0
-		
+
 		if not is_on_floor():
 			can_dash = false
-		
+
 		# Create a one-shot timer for the dash duration
 		get_tree().create_timer(dash_duration).timeout.connect(func():
 			if current_state == State.DASH:
@@ -191,10 +217,12 @@ func handle_combat_input():
 
 func _on_animation_finished():
 	if current_state == State.ATTACK:
+		activate_hitbox("", false)
 		if next_attack_queued:
 			next_attack_queued = false
 			combo_step = (combo_step + 1) % attack_animations.size()
 			change_state(State.ATTACK, attack_animations[combo_step])
+			activate_hitbox(attack_animations[combo_step], true)
 		else:
 			change_state(State.MOVE)
 	elif current_state == State.DASH:
@@ -206,6 +234,12 @@ func _on_animation_finished():
 		sprite.play("wall-slide")
 
 func update_animations():
+	if current_state in [State.ATTACK, State.HURT]:
+		return
+		
+	# Safety cleanup for any state transition that might have bypassed animation_finished
+	activate_hitbox("", false)
+
 	match current_state:
 		State.MOVE:
 			if velocity.x == 0:
