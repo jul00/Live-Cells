@@ -1,0 +1,202 @@
+[gd_scene format=3 uid="uid://noojyk7uariu"]
+
+[ext_resource type="Texture2D" uid="uid://b0rvd6jhuy53g" path="res://assets/Food/items_sheet.png" id="1_l8ohm"]
+[ext_resource type="Script" uid="uid://daidqbrfhjqbk" path="res://scripts/health_item.gd" id="1_pvihj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pvihj"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(464, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xpddy"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(128, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8uqj"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(32, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v3ipp"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(432, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hyr1t"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(0, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ks4a0"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(256, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4dwh"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(368, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4grxd"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(208, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0hl7a"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(464, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eut2k"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(432, 448, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qw3nd"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(432, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q53wq"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(368, 192, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swiew"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(448, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjkbf"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(224, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2py25"]
+atlas = ExtResource("1_l8ohm")
+region = Rect2(64, 160, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_l6bxf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pvihj")
+}],
+"loop": true,
+"name": &"apple",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xpddy")
+}],
+"loop": true,
+"name": &"bread",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d8uqj")
+}],
+"loop": true,
+"name": &"carrot",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v3ipp")
+}],
+"loop": true,
+"name": &"cherry",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hyr1t")
+}],
+"loop": true,
+"name": &"grapes",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ks4a0")
+}],
+"loop": true,
+"name": &"maki",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4dwh")
+}],
+"loop": true,
+"name": &"mango",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4grxd")
+}],
+"loop": true,
+"name": &"melon",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0hl7a")
+}],
+"loop": true,
+"name": &"onigiri",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eut2k")
+}],
+"loop": true,
+"name": &"poo",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qw3nd")
+}],
+"loop": true,
+"name": &"ribs",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q53wq")
+}],
+"loop": true,
+"name": &"shrimp",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_swiew")
+}],
+"loop": true,
+"name": &"steak",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qjkbf")
+}],
+"loop": true,
+"name": &"strawberry",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2py25")
+}],
+"loop": true,
+"name": &"sushi",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dfisj"]
+radius = 12.0
+
+[node name="Health Item" type="Area2D" unique_id=2111685965]
+script = ExtResource("1_pvihj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=566137184]
+position = Vector2(0, -12)
+sprite_frames = SubResource("SpriteFrames_l6bxf")
+animation = &"cherry"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=685958499]
+position = Vector2(0, -12)
+shape = SubResource("CircleShape2D_dfisj")

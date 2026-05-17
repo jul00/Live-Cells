@@ -33,9 +33,9 @@ func _ready() -> void:
 	next_phase1_block_hp = max_health * 0.875 # First 25% of Phase 1 (1500 - 187.5 = 1312.5)
 	# Default Boss Hitbox Profiles
 	hitbox_profiles = {
-		"atk1": {"pos": Vector2(20, -20), "size": Vector2(50, 30), "damage": 15.0},
-		"atk2": {"pos": Vector2(20, -20), "size": Vector2(60, 48), "damage": 20.0},
-		"atk3": {"pos": Vector2(30, -20), "size": Vector2(30, 60), "damage": 25.0},
+		"atk1": {"pos": Vector2(20, -20), "size": Vector2(50, 30), "damage": 80.0},
+		"atk2": {"pos": Vector2(20, -20), "size": Vector2(60, 48), "damage": 80.0},
+		"atk3": {"pos": Vector2(30, -20), "size": Vector2(30, 60), "damage": 80.0},
 		"shout": {"pos": Vector2(0, -20), "size": Vector2(150, 150), "damage": 0.0} # Push back AOE
 	}
 	sprite.animation_finished.connect(_on_animation_finished)
@@ -288,6 +288,7 @@ func _on_animation_finished():
 		State.HURT:
 			pass # Process handles recovery
 		State.DEATH:
+			handle_death(global_position)
 			queue_free()
 
 func _update_facing(dir_x: float) -> void:

@@ -612,8 +612,8 @@ height = 37.142853
 
 [node name="ZonerEnemy" type="CharacterBody2D" unique_id=1129396106 groups=["enemy"]]
 scale = Vector2(0.7, 0.7)
-collision_layer = 2
-collision_mask = 2
+collision_layer = 4
+collision_mask = 4
 script = ExtResource("archer_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=157869576]

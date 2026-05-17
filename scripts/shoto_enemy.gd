@@ -42,10 +42,10 @@ func _ready() -> void:
 	max_health_val = health
 	next_stagger_breaker_hp = max_health_val * (2.0/3.0)
 	hitbox_profiles = {
-		"atk1": {"pos": Vector2(20, -25), "size": Vector2(38, 38), "damage": 10.0},
-		"atk2": {"pos": Vector2(14, -21), "size": Vector2(30, 40), "damage": 10.0}, #x-y w-h
-		"atk3": {"pos": Vector2(9, -15), "size": Vector2(48, 30), "damage": 10.0},
-		"dash-atk": {"pos": Vector2(16, -14), "size": Vector2(48, 5), "damage": 15.0}
+		"atk1": {"pos": Vector2(20, -25), "size": Vector2(38, 38), "damage": 40.0},
+		"atk2": {"pos": Vector2(14, -21), "size": Vector2(30, 40), "damage": 40.0}, #x-y w-h
+		"atk3": {"pos": Vector2(9, -15), "size": Vector2(48, 30), "damage": 40.0},
+		"dash-atk": {"pos": Vector2(16, -14), "size": Vector2(48, 5), "damage": 40.0}
 	}
 	sprite.animation_finished.connect(_on_animation_finished)
 	sprite.frame_changed.connect(_on_frame_changed)
@@ -290,6 +290,7 @@ func _on_animation_finished():
 		State.HURT:
 			pass # Recovery handled in _physics_process
 		State.DEATH:
+			handle_death(global_position)
 			queue_free()
 
 func _on_frame_changed():

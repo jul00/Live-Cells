@@ -21,6 +21,9 @@ var can_dash = true
 
 func _ready():
 	super._ready()
+	name = "Player"
+	health = 1200.0
+	update_health_ui()
 	hitbox_profiles = {
 		"atk1": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
 		"atk2": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
@@ -111,24 +114,52 @@ func change_state(new_state: State, anim_name: String = ""):
 		State.WALL:
 			sprite.play("wall-contact")
 
+func update_health_ui():
+	for node in get_tree().get_nodes_in_group("ui_health_bar"):
+		if node is ProgressBar:
+			node.value = health
+			var label = node.get_node_or_null("Label")
+			if label:
+				label.text = str(int(health)) + " / " + str(int(node.max_value))
+
+
 func receive_hit(damage: float, attacker: Node2D):
+	var actual_damage = damage
 	if current_state == State.DASH:
 		# Player is invincible while dashing
 		print("Invincible during dash!")
-		return 0.0
-		
-	if current_state == State.DEFEND:
+		actual_damage = 0.0
+	elif current_state == State.DEFEND:
 		# Block the hit: play the animation and ensure velocity is zero
 		sprite.play("defend")
 		velocity = Vector2.ZERO
 		
-		print("Blocked! Damage reduced.")
-		# For now, we just reduce damage by 80%
-		return damage * 0.2
+		print("Blocked! Damage nullified.")
+		# Perfect block: nullify all damage
+		actual_damage = 0.0
 	else:
 		# Take full damage and enter HURT state
 		change_state(State.HURT)
-		return damage
+	
+	health -= actual_damage
+	health = max(0.0, health) # Prevent negative health
+	update_health_ui()
+	
+	if health <= 0:
+		change_state(State.DEATH)
+		
+	return actual_damage
+
+func heal(percentage: float):
+	# percentage is a value like 15.0 for 15%
+	var flat_amount = 1200.0 * (percentage / 100.0)
+	health += flat_amount
+	health = clamp(health, 0.0, 1200.0)
+	update_health_ui()
+	print("Player healed by ", flat_amount, " (", percentage, "%). Current health: ", health)
+	
+	if health <= 0:
+		change_state(State.DEATH)
 
 func handle_movement_input(delta: float):
 	if current_state != State.DEFEND:
@@ -230,6 +261,8 @@ func _on_animation_finished():
 		change_state(State.MOVE)
 	elif current_state == State.HURT:
 		change_state(State.MOVE)
+	elif current_state == State.DEATH:
+		get_tree().paused = true
 	if current_state == State.WALL and sprite.animation == "wall-contact":
 		sprite.play("wall-slide")
 

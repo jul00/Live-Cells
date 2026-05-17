@@ -4,11 +4,11 @@
 [ext_resource type="PackedScene" uid="uid://dftrpkfy22rxb" path="res://scenes/player.tscn" id="2_mu1h5"]
 [ext_resource type="PackedScene" uid="uid://dv4hhndd1sosr" path="res://scenes/zoner_enemy.tscn" id="3_dkpym"]
 [ext_resource type="PackedScene" uid="uid://dtvftxtroi8ia" path="res://scenes/grappler_enemy.tscn" id="4_7dpvd"]
-[ext_resource type="PackedScene" uid="uid://bq3umn5612du" path="res://scenes/boss.tscn" id="5_467br"]
 [ext_resource type="PackedScene" uid="uid://15o4c6da8qvi" path="res://scenes/shoto_enemy.tscn" id="5_ujok3"]
 [ext_resource type="PackedScene" uid="uid://dal5yhk605c8t" path="res://scenes/rushdown_enemy.tscn" id="6_mmyom"]
+[ext_resource type="PackedScene" uid="uid://dqlcynhf1g6vh" path="res://scenes/ui.tscn" id="7_467br"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mu1h5"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mmyom"]
 texture = ExtResource("1_mb3qh")
 0:0/0 = 0
 1:0/0 = 0
@@ -877,12 +877,12 @@ texture = ExtResource("1_mb3qh")
 5:23/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_dkpym"]
-physics_layer_0/collision_layer = 3
-physics_layer_0/collision_mask = 3
+physics_layer_0/collision_layer = 255
+physics_layer_0/collision_mask = 255
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Terrain 0"
 terrain_set_0/terrain_0/color = Color(1.1551381e-06, 0.6458744, 0.81315887, 1)
-sources/0 = SubResource("TileSetAtlasSource_mu1h5")
+sources/0 = SubResource("TileSetAtlasSource_mmyom")
 
 [node name="TestingArea" type="Node2D" unique_id=211016338]
 
@@ -899,16 +899,15 @@ layer_1/name = "bg"
 position = Vector2(727, -421)
 
 [node name="ZonerEnemy" parent="." unique_id=1129396106 instance=ExtResource("3_dkpym")]
-position = Vector2(956, -7.0000076)
+position = Vector2(610, -99.00001)
 
 [node name="GrapplerEnemy" parent="." unique_id=501975320 instance=ExtResource("4_7dpvd")]
-position = Vector2(908, -422)
+position = Vector2(1256, -100)
 
 [node name="ShotoEnemy" parent="." unique_id=399231233 instance=ExtResource("5_ujok3")]
 position = Vector2(518, -624)
 
 [node name="RushdownEnemy" parent="." unique_id=632074443 instance=ExtResource("6_mmyom")]
-position = Vector2(909, -1.5258789e-05)
+position = Vector2(899, -103.99999)
 
-[node name="Boss" parent="." unique_id=1150586274 instance=ExtResource("5_467br")]
-position = Vector2(772.00006, -18)
+[node name="UI" parent="." unique_id=1291615569 instance=ExtResource("7_467br")]

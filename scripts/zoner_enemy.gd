@@ -261,6 +261,7 @@ func _on_animation_finished() -> void:
 		else:
 			change_state(State.ROAM)
 	elif current_state == State.DEATH:
+		handle_death(global_position)
 		queue_free()
 
 func _on_detection_area_body_entered(body: Node2D) -> void:

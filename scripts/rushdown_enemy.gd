@@ -35,9 +35,9 @@ func _ready() -> void:
 	next_stagger_breaker_hp = max_health_val * (2.0/3.0)
 	
 	hitbox_profiles = {
-		"atk1": {"pos": Vector2(25, -20), "size": Vector2(37, 40), "damage": 8.0}, # Lunge
-		"atk2": {"pos": Vector2(20, -20), "size": Vector2(32, 40), "damage": 8.0}, # Fast follow-up
-		"atk3": {"pos": Vector2(20, -15), "size": Vector2(50, 40), "damage": 15.0} # Heavy Counter
+		"atk1": {"pos": Vector2(25, -20), "size": Vector2(37, 40), "damage": 60.0}, # Lunge
+		"atk2": {"pos": Vector2(20, -20), "size": Vector2(32, 40), "damage": 60.0}, # Fast follow-up
+		"atk3": {"pos": Vector2(20, -15), "size": Vector2(50, 40), "damage": 60.0} # Heavy Counter
 	}
 	
 	sprite.animation_finished.connect(_on_animation_finished)
@@ -225,6 +225,7 @@ func _on_animation_finished() -> void:
 			# If the defend animation finishes naturally without being hit, counter
 			_start_counter_attack()
 		State.DEATH:
+			handle_death(global_position)
 			queue_free()
 
 func _update_facing(dir_x: float) -> void:

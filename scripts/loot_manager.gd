@@ -1,0 +1,39 @@
+extends Node
+
+@export var drop_chance: float = 1
+
+const HEALTH_ITEM_SCENE = preload("res://scenes/health_items.tscn")
+
+var loot_table = {
+	"apple": {"anim": "apple", "value": 15.0},
+	"bread": {"anim": "bread", "value": 10.0},
+	"carrot": {"anim": "carrot", "value": 10.0},
+	"cherry": {"anim": "cherry", "value": 15.0},
+	"grapes": {"anim": "grapes", "value": 15.0},
+	"maki": {"anim": "maki", "value": 20.0},
+	"mango": {"anim": "mango", "value": 15.0},
+	"melon": {"anim": "melon", "value": 15.0},
+	"onigiri": {"anim": "onigiri", "value": 20.0},
+	"ribs": {"anim": "ribs", "value": 30.0},
+	"shrimp": {"anim": "shrimp", "value": 20.0},
+	"steak": {"anim": "steak", "value": 30.0},
+	"strawberry": {"anim": "strawberry", "value": 10.0},
+	"sushi": {"anim": "sushi", "value": 20.0},
+	"poo": {"anim": "poo", "value": -240.0}
+}
+
+func spawn_loot(pos: Vector2) -> void:
+	if randf() > drop_chance:
+		return
+	
+	var item = HEALTH_ITEM_SCENE.instantiate()
+	add_child(item)
+	item.global_position = pos
+	
+	var item_name = loot_table.keys().pick_random()
+	var data = loot_table[item_name]
+	
+	if item.has_method("setup"):
+		item.setup(data["anim"], data["value"])
+	else:
+		push_error("Loot item does not have a setup method!")

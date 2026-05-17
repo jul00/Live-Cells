@@ -6,6 +6,7 @@ class_name CombatEntity
 @export var hitbox_profiles: Dictionary = {} # Format: {"id": {"pos": Vector2, "size": Vector2, "damage": float}}
 
 var current_active_profile_id: String = ""
+var is_dead: bool = false
 
 @onready var sprite = $AnimatedSprite2D
 @onready var attack_area = $AttackArea
@@ -89,3 +90,12 @@ func _get_active_profile() -> Dictionary:
 	if current_active_profile_id == "" or not hitbox_profiles.has(current_active_profile_id):
 		return {}
 	return hitbox_profiles[current_active_profile_id]
+
+func handle_death(spawn_pos: Vector2):
+	if is_dead:
+		return
+	is_dead = true
+	if LootManager:
+		get_tree().create_timer(0.8).timeout.connect(func():
+			LootManager.spawn_loot(spawn_pos)
+		)

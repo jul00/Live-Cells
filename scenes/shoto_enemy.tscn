@@ -562,8 +562,8 @@ height = 34.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gak2d"]
 
 [node name="ShotoEnemy" type="CharacterBody2D" unique_id=399231233 groups=["enemy"]]
-collision_layer = 2
-collision_mask = 2
+collision_layer = 8
+collision_mask = 8
 script = ExtResource("1_gak2d")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1428208352]

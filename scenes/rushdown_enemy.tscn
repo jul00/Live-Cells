@@ -423,8 +423,8 @@ height = 36.0
 
 [node name="RushdownEnemy" type="CharacterBody2D" unique_id=632074443 groups=["enemy"]]
 scale = Vector2(0.8, 0.8)
-collision_layer = 2
-collision_mask = 2
+collision_layer = 16
+collision_mask = 16
 script = ExtResource("1_qurlu")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2135684636]

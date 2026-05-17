@@ -25,8 +25,8 @@ func _ready() -> void:
 	faces_left_by_default = true
 	health = 480.0
 	hitbox_profiles = {
-		"atk1": {"pos": Vector2(20, -36), "size": Vector2(70, 70), "damage": 15.0},
-		"atk2": {"pos": Vector2(25, -36), "size": Vector2(60, 60), "damage": 15.0}
+		"atk1": {"pos": Vector2(20, -36), "size": Vector2(70, 70), "damage": 120.0},
+		"atk2": {"pos": Vector2(25, -36), "size": Vector2(60, 60), "damage": 120.0}
 	}
 	sprite.animation_finished.connect(_on_animation_finished)
 	sprite.frame_changed.connect(_on_frame_changed)
@@ -214,6 +214,7 @@ func _on_animation_finished() -> void:
 		else:
 			change_state(State.COOLDOWN)
 	elif current_state == State.DEATH:
+		handle_death(global_position)
 		queue_free()
 
 func _on_detection_area_body_entered(body: Node2D) -> void:
