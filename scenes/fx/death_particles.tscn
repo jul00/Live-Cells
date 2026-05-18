@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://br2ddjd8er6w7"]
+
+[ext_resource type="Script" uid="uid://b0k43whe6dk16" path="res://scripts/fx/one_shot_particles.gd" id="1_tmeo5"]
+
+[sub_resource type="Gradient" id="Gradient_p4v7m"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0)
+
+[node name="DeathParticles" type="CPUParticles2D" unique_id=267937839]
+emitting = false
+amount = 30
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.9
+direction = Vector2(0, -1)
+gravity = Vector2(0, -50)
+initial_velocity_min = 50.0
+initial_velocity_max = 80.0
+damping_min = 20.0
+damping_max = 20.0
+scale_amount_min = 3.0
+scale_amount_max = 3.0
+color_ramp = SubResource("Gradient_p4v7m")
+script = ExtResource("1_tmeo5")

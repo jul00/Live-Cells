@@ -19,10 +19,12 @@ var combo_grace_timer = 0.0
 var attack_animations = ["atk1", "atk2", "atk3"]
 var can_dash = true
 
+
 func _ready():
 	super._ready()
 	name = "Player"
 	health = 1200.0
+	hit_particle_color = Color(1, 0.2, 0.2) # Red sparks
 	update_health_ui()
 	hitbox_profiles = {
 		"atk1": {"pos": Vector2(21.25, -17.5), "size": Vector2(40, 40), "damage": 20.0},
@@ -74,6 +76,14 @@ func _physics_process(delta: float) -> void:
 
 	if current_state == State.MOVE or current_state == State.JUMP or current_state == State.WALL or current_state == State.DEFEND:
 		handle_movement_input(delta)
+	
+	# Footstep SFX logic
+	if is_on_floor() and abs(velocity.x) > 10.0 and current_state == State.MOVE:
+		if AudioManager and not AudioManager.is_playing("footstep"):
+			AudioManager.play_sfx("footstep")
+	else:
+		if AudioManager and AudioManager.is_playing("footstep"):
+			AudioManager.stop_sfx("footstep")
 	
 	handle_combat_input()
 	
@@ -128,8 +138,9 @@ func receive_hit(damage: float, attacker: Node2D):
 	if current_state == State.DASH:
 		# Player is invincible while dashing
 		print("Invincible during dash!")
-		actual_damage = 0.0
+		return 0.0
 	elif current_state == State.DEFEND:
+		AudioManager.play_sfx("block")
 		# Block the hit: play the animation and ensure velocity is zero
 		sprite.play("defend")
 		velocity = Vector2.ZERO
@@ -140,6 +151,18 @@ func receive_hit(damage: float, attacker: Node2D):
 	else:
 		# Take full damage and enter HURT state
 		change_state(State.HURT)
+		AudioManager.play_sfx("hit")
+		
+		# Trigger Hit Stop
+		if LootManager:
+			LootManager.trigger_hit_stop(0.05)
+		
+		# Calculate direction of spray (away from attacker)
+		var spray_rot = 0.0
+		if is_instance_valid(attacker):
+			var dir = (global_position - attacker.global_position).normalized()
+			spray_rot = dir.angle()
+		spawn_particles(HIT_FX, global_position + Vector2(0, -16), hit_particle_color, spray_rot)
 	
 	health -= actual_damage
 	health = max(0.0, health) # Prevent negative health
@@ -195,6 +218,7 @@ func handle_movement_input(delta: float):
 	velocity.x = move_toward(velocity.x, 0, friction)
 
 func attack():
+	AudioManager.play_sfx("hit")
 	if current_state == State.JUMP:
 		change_state(State.ATTACK, "air-atk")
 		activate_hitbox("air-atk", true)
@@ -219,13 +243,14 @@ func handle_combat_input():
 		else:
 			attack()
 
-	if Input.is_action_just_pressed("special-attack"):
-		change_state(State.ATTACK, "special-atk")
-		activate_hitbox("special-atk", true)
-		next_attack_queued = false
-		combo_step = -1
+#	if Input.is_action_just_pressed("special-attack"):
+#		change_state(State.ATTACK, "special-atk")
+#		activate_hitbox("special-atk", true)
+#		next_attack_queued = false
+#		combo_step = -1
 
 	if Input.is_action_just_pressed("dash") and can_dash:
+		AudioManager.play_sfx("dash")
 		change_state(State.DASH)
 		var dash_dir = -1 if sprite.flip_h else 1
 		velocity.x = dash_dir * dash_speed
@@ -254,6 +279,7 @@ func _on_animation_finished():
 			combo_step = (combo_step + 1) % attack_animations.size()
 			change_state(State.ATTACK, attack_animations[combo_step])
 			activate_hitbox(attack_animations[combo_step], true)
+			AudioManager.play_sfx("hit")
 		else:
 			change_state(State.MOVE)
 	elif current_state == State.DASH:

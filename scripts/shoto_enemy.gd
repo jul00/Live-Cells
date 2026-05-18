@@ -104,6 +104,8 @@ func change_state(new_state: State) -> void:
 	match current_state:
 		State.IDLE:
 			velocity.x = 0
+			if randf() < 0.4:
+				perform_look_around()
 		State.COMBAT:
 			velocity.x = 0
 			combo_step = 0
@@ -126,6 +128,8 @@ func change_state(new_state: State) -> void:
 			sprite.play("hurt")
 		State.EVADE:
 			if is_instance_valid(target_player):
+				if AudioManager:
+					AudioManager.play_sfx("dash")
 				var dir_away = -1 if target_player.global_position.x > global_position.x else 1
 				velocity.x = dir_away * evade_speed
 				_update_facing(-dir_away) # Face the player while moving away
@@ -165,28 +169,29 @@ func _process_idle(delta: float) -> void:
 	if state_timer > 1.5:
 		change_state(State.ROAM)
 
-func _process_roam(delta: float) -> void:
+func _process_roam(_delta: float) -> void:
 	if not is_roaming:
 		var dir = 1 if randf() > 0.5 else -1
-		roam_target = global_position + Vector2(dir * randf_range(80, 160), 0)
+		roam_target = global_position + Vector2(dir * randf_range(60, 150), 0)
 		is_roaming = true
 		_update_facing(dir)
-	
-	var move_dir = -1 if sprite.flip_h else 1
-	velocity.x = move_dir * roam_speed
-	
+
+	var move_dir = 1 if sprite.flip_h else -1
+	velocity.x = move_dir * speed
+
 	if (is_on_floor() and not ray_cast.is_colliding()) or is_on_wall():
 		velocity.x = 0
 		is_roaming = false
 		change_state(State.IDLE)
 		return
-		
+
 	if abs(roam_target.x - global_position.x) < 10:
 		velocity.x = 0
 		is_roaming = false
 		change_state(State.IDLE)
 
-func _process_approach(delta: float) -> void:
+func _process_approach(_delta: float) -> void:
+
 	if not is_instance_valid(target_player):
 		change_state(State.IDLE)
 		return
@@ -346,6 +351,8 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 			was_blocked = true
 			sprite.stop()
 			sprite.play("defend") # Show the block on hit
+			if AudioManager:
+				AudioManager.play_sfx("block")
 			final_damage *= 0.1 # 90% reduction
 			print(name, " blocked hit!")
 			

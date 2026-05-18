@@ -1,9 +1,13 @@
 extends CharacterBody2D
 class_name CombatEntity
 
+const HIT_FX = preload("res://scenes/fx/hit_particles.tscn")
+const DEATH_FX = preload("res://scenes/fx/death_particles.tscn")
+
 @export var health: float = 100.0
 @export var faces_left_by_default: bool = false
 @export var hitbox_profiles: Dictionary = {} # Format: {"id": {"pos": Vector2, "size": Vector2, "damage": float}}
+@export var hit_particle_color: Color = Color.WHITE
 
 var current_active_profile_id: String = ""
 var is_dead: bool = false
@@ -25,8 +29,35 @@ func _ready():
 	if attack_shape and attack_shape.shape:
 		attack_shape.shape = attack_shape.shape.duplicate()
 
+func spawn_particles(scene: PackedScene, pos: Vector2, color: Color = Color.WHITE, rot: float = 0.0):
+	var fx = scene.instantiate()
+	get_tree().root.add_child(fx)
+	fx.global_position = pos
+	fx.modulate = color
+	fx.rotation = rot
+
 func receive_hit(damage: float, attacker: Node2D) -> float:
+	if health <= 0 or is_dead:
+		return 0.0
+		
 	health -= damage
+	
+	# Trigger Hit Stop (0.05s)
+	if LootManager:
+		LootManager.trigger_hit_stop(0.05)
+		
+	# Trigger Hit Sound
+	if AudioManager:
+		AudioManager.play_sfx("hit")
+	
+	# Calculate direction of spray (away from attacker)
+	var spray_rot = 0.0
+	if is_instance_valid(attacker):
+		var dir = (global_position - attacker.global_position).normalized()
+		spray_rot = dir.angle()
+	
+	# Spawn particles at a consistent height (-16)
+	spawn_particles(HIT_FX, global_position + Vector2(0, -16), hit_particle_color, spray_rot)
 	print(name, " took hit! Health: ", health)
 	return damage
 
@@ -94,8 +125,22 @@ func _get_active_profile() -> Dictionary:
 func handle_death(spawn_pos: Vector2):
 	if is_dead:
 		return
+	spawn_particles(DEATH_FX, spawn_pos)
 	is_dead = true
 	if LootManager:
-		get_tree().create_timer(0.8).timeout.connect(func():
+		get_tree().create_timer(0.5).timeout.connect(func():
 			LootManager.spawn_loot(spawn_pos)
 		)
+
+func perform_look_around():
+	await get_tree().create_timer(0.5).timeout
+	if is_dead or not sprite: return
+	
+	sprite.flip_h = !sprite.flip_h
+	update_combat_facing()
+	
+	await get_tree().create_timer(0.8).timeout
+	if is_dead or not sprite: return
+	
+	sprite.flip_h = !sprite.flip_h
+	update_combat_facing()

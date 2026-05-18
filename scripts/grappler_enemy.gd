@@ -77,6 +77,10 @@ func change_state(new_state: State) -> void:
 	
 	# Entry logic
 	match current_state:
+		State.IDLE:
+			velocity.x = 0
+			if randf() < 0.4:
+				perform_look_around()
 		State.ATTACK:
 			will_chain_attack = randf() <= 0.33
 			start_attack("atk1")
@@ -102,7 +106,9 @@ func _evaluate_combat_state() -> void:
 
 func start_attack(anim_name: String) -> void:
 	sprite.play(anim_name)
-	
+	if AudioManager:
+		AudioManager.play_sfx("hit")
+
 	# Set position immediately so it's correct during the wind-up
 	if hitbox_profiles.has(anim_name) and attack_shape:
 		current_active_profile_id = anim_name
@@ -111,7 +117,7 @@ func start_attack(anim_name: String) -> void:
 		current_active_profile_id = "" # Clear it so update_combat_facing doesn't move it during wind-up
 	
 	# Calculate wind-up delay (0.5s for heavy opener, 0.3s for follow-up)
-	var delay = 0.5 if anim_name == "atk1" else 0.3
+	var delay = 0.8 if anim_name == "atk1" else 0.3
 	
 	get_tree().create_timer(delay).timeout.connect(func():
 		if current_state == State.ATTACK and sprite.animation == anim_name:

@@ -10,6 +10,9 @@ enum State { IDLE, ROAM, CHASE, FLEE, SPACING, ATTACK, HURT, DEATH, EVADE}
 @export var engagement_zone_dist: float = 168.0 # Increased by 40% (120 * 1.4)
 @export var gravity_multiplier: float = 0.7
 @export var stagger_recovery_time: float = 0.5
+@export var special_atk_height_frame_12: float = 5.0
+@export var special_atk_height_frame_15: float = 2.0
+@export var special_atk_height_frame_18: float = 3.0
 
 @onready var ray_cast = $RayCast2D
 @onready var muzzle = $Muzzle
@@ -95,6 +98,9 @@ func change_state(new_state: State) -> void:
 	
 	# Entry logic
 	match current_state:
+		State.IDLE:
+			if randf() < 0.4:
+				perform_look_around()
 		State.ATTACK:
 			velocity.x = 0 # Stop moving when starting an attack
 			# 33% chance to do a special attack
@@ -114,6 +120,8 @@ func change_state(new_state: State) -> void:
 			sprite.play("die")
 		State.EVADE:
 			if is_instance_valid(target_player):
+				if AudioManager:
+					AudioManager.play_sfx("dash")
 				var dir_away = -1 if target_player.global_position.x > global_position.x else 1
 				velocity.x = dir_away * evade_speed
 				# Face the player while dashing away
@@ -185,9 +193,9 @@ func process_spacing(_delta: float) -> void:
 		change_state(State.ATTACK)
 		return
 
-	# While spacing and waiting for cooldown, back-pedal slowly
+	# While spacing and waiting for cooldown, back-pedal
 	var dir_to_player = (target_player.global_position - global_position).normalized()
-	velocity.x = -dir_to_player.x * roam_speed
+	velocity.x = -dir_to_player.x * speed
 	evaluate_combat_state()
 
 func process_attack(_delta: float) -> void:
@@ -215,7 +223,7 @@ func evaluate_combat_state() -> void:
 		
 	var dist = global_position.distance_to(target_player.global_position)
 	if dist < danger_zone_dist:
-		change_state(State.FLEE)
+		change_state(State.EVADE)
 	elif dist <= engagement_zone_dist:
 		if attack_timer.is_stopped():
 			change_state(State.ATTACK)
@@ -226,12 +234,17 @@ func evaluate_combat_state() -> void:
 
 func execute_attack(anim_name: String) -> void:
 	sprite.play(anim_name)
+	if AudioManager:
+		AudioManager.play_sfx("bow_draw")
 	attack_timer.start(2.5) # 2.5 second cooldown between attacks
 
-func spawn_arrow(angle_offset: float) -> void:
+func spawn_arrow(angle_offset: float, height_offset: float = 0.0) -> void:
 	var arrow = arrow_scene.instantiate()
 	get_tree().root.add_child(arrow)
-	arrow.global_position = muzzle.global_position
+	arrow.global_position = muzzle.global_position + Vector2(0, height_offset)
+	
+	if AudioManager:
+		AudioManager.play_sfx("bow_shoot")
 	
 	# Shoot horizontally in the direction the Archer is facing
 	var face_dir = -1 if sprite.flip_h else 1
@@ -246,10 +259,13 @@ func _on_frame_changed() -> void:
 		
 	if sprite.animation == "attack" and sprite.frame == 9:
 		spawn_arrow(0)
-	elif sprite.animation == "special-attack" and sprite.frame == 17:
-		spawn_arrow(-15)
-		spawn_arrow(0)
-		spawn_arrow(15)
+	elif sprite.animation == "special-attack":
+		if sprite.frame == 12:
+			spawn_arrow(0, special_atk_height_frame_12)
+		elif sprite.frame == 15:
+			spawn_arrow(0, special_atk_height_frame_15)
+		elif sprite.frame == 18:
+			spawn_arrow(0, special_atk_height_frame_18)
 
 func _on_animation_finished() -> void:
 	if current_state == State.ATTACK:
@@ -326,6 +342,14 @@ func update_animations() -> void:
 	update_facing()
 	
 	if current_state in [State.ATTACK, State.HURT, State.DEATH, State.EVADE]:
+		# Attack, hurt and death animations are handled separately
+		return
+		
+	if abs(velocity.x) > 0:
+		sprite.play("run")
+	else:
+		sprite.play("idle")
+
 		# Attack, hurt and death animations are handled separately
 		return
 		

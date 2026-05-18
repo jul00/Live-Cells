@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 MCPRuntime="*uid://b01pd32wbxrxj"
+AudioManager="*res://scripts/audio_manager.gd"
 LootManager="*res://scripts/loot_manager.gd"
 
 [display]

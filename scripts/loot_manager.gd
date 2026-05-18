@@ -19,8 +19,14 @@ var loot_table = {
 	"steak": {"anim": "steak", "value": 30.0},
 	"strawberry": {"anim": "strawberry", "value": 10.0},
 	"sushi": {"anim": "sushi", "value": 20.0},
-	"poo": {"anim": "poo", "value": -240.0}
+	"poo": {"anim": "poo", "value": -20.0}
 }
+
+func trigger_hit_stop(duration: float):
+	Engine.time_scale = 0.05
+	get_tree().create_timer(duration, true, false, true).timeout.connect(func():
+		Engine.time_scale = 1.0
+	)
 
 func spawn_loot(pos: Vector2) -> void:
 	if randf() > drop_chance:
@@ -29,6 +35,8 @@ func spawn_loot(pos: Vector2) -> void:
 	var item = HEALTH_ITEM_SCENE.instantiate()
 	add_child(item)
 	item.global_position = pos
+	
+	AudioManager.play_sfx("item_spawn")
 	
 	var item_name = loot_table.keys().pick_random()
 	var data = loot_table[item_name]

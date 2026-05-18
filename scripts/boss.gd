@@ -241,8 +241,11 @@ func _process_hurt(delta: float) -> void:
 
 func _start_attack(anim_name: String):
 	sprite.play(get_anim(anim_name))
-	
+	if anim_name == "shout" and AudioManager:
+		AudioManager.play_sfx("shout")
+
 	activate_hitbox(anim_name, true)
+
 	if is_phase_2 and anim_name in ["atk1", "atk2", "atk3"]:
 		var lunge_dir = -1 if sprite.flip_h else 1
 		velocity.x = lunge_dir * 450.0 # Heavy lunge
@@ -320,6 +323,8 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 			was_blocked = true
 			sprite.stop()
 			sprite.play(get_anim("defend")) # Show the block on hit
+			if AudioManager:
+				AudioManager.play_sfx("block")
 			final_damage *= 0.1 # 90% damage reduction
 			print("BOSS BLOCKED! (Frontal Hit) Reduced damage: ", final_damage)
 

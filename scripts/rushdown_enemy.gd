@@ -92,6 +92,8 @@ func change_state(new_state: State) -> void:
 	match current_state:
 		State.IDLE:
 			velocity.x = 0
+			if randf() < 0.4:
+				perform_look_around()
 		State.APPROACH:
 			pass
 		State.DEFEND:
@@ -259,6 +261,8 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 			was_blocked = true
 			sprite.stop()
 			sprite.play("defend") # Show impact
+			if AudioManager:
+				AudioManager.play_sfx("block")
 			final_damage *= 0.1 # 90% reduction
 			print(name, " blocked hit!")
 			
