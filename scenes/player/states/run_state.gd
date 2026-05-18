@@ -14,7 +14,7 @@ func physics_update(delta: float) -> void:
 		
 		player.velocity.x = direction * player.movespeed
 		
-		if player.velocity.x == 0:
+		if direction == 0:
 			state_machine.change_state(state_machine.get_node("Idle"))
 			return
 		

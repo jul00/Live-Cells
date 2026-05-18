@@ -4,8 +4,10 @@ extends CharacterBody2D
 @onready var input_handler: Node = $PlayerInput
 @onready var state_machine: Node = $StateMachine
 @onready var hitbox: PlayerHitbox = $Hitbox
+@onready var hurtbox: PlayerHurtbox = $Hurtbox
 @onready var input_buffer: InputBuffer = $InputBuffer
 
+var can_airdash: bool = false
 
 # Physics stats
 var movespeed = 400
@@ -17,11 +19,13 @@ var air_dash_speed = 380
 var air_accel = 1500
 var air_max_speed = 400
 
+var neutralupnormal_velocity = -475
+
 # Frame stats
 var land_frames = 5
-var dash_frames = 10
+var dash_frames = 21
 
-var input_buffer_time = 0.2  # seconds
+var input_buffer_time = 1  # seconds
 var input_buffer_timer = 0.0
 
 var facing_direction = 1

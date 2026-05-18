@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AttackFrameData" format=3 uid="uid://cp8lrqhi4jua7"]
+
+[ext_resource type="Script" uid="uid://bddpolynamjoj" path="res://scenes/player/attacks/attack_frame_data.gd" id="1_urltd"]
+
+[resource]
+script = ExtResource("1_urltd")
+startup_frames = Vector2i(0, 14)
+active_frames = Vector2i(15, 22)
+recovery_frames = Vector2i(23, 28)
+metadata/_custom_type_script = "uid://bddpolynamjoj"

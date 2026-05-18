@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clrx6vwor0rql"
-path="res://.godot/imported/nspecial.png-cef936bc6a3a63d23fef014c62e2171d.ctex"
+uid="uid://dkk4ljpt7bf18"
+path="res://.godot/imported/shuriken.png-dffcfd459192cbae9cdb2a87673ee4ea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/nspecial.png"
-dest_files=["res://.godot/imported/nspecial.png-cef936bc6a3a63d23fef014c62e2171d.ctex"]
+source_file="res://assets/player-sprites/shuriken.png"
+dest_files=["res://.godot/imported/shuriken.png-dffcfd459192cbae9cdb2a87673ee4ea.ctex"]
 
 [params]
 

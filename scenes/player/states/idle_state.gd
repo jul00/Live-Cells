@@ -4,12 +4,14 @@ func enter():
 	super()
 	print("entered idle")
 	player.hitbox.monitoring = false
+	player.hurtbox.monitoring = true
 	player.animator.play_idle()
 
 
 func physics_update(delta: float):
 
 	var direction = player.input_handler.get_move_direction()
+	var vertical = player.input_buffer.vertical
 	var action = player.input_buffer.buffered_action
 
 	player.velocity.x = 0
@@ -17,7 +19,6 @@ func physics_update(delta: float):
 	if not player.is_on_floor():
 		state_machine.change_state(state_machine.get_node("Fall"))
 		return
-
 
 	# Handle buffered actions
 	match action:
@@ -38,6 +39,6 @@ func physics_update(delta: float):
 			state_machine.change_state(state_machine.get_node("Dash"))
 			return
 
-
 	if direction != 0:
 		state_machine.change_state(state_machine.get_node("Run"))
+		return

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://drtcd5vy76few"
-path="res://.godot/imported/light attack.png-8ed09a14218949221c06df12f630c3f5.ctex"
+uid="uid://c8ankwcnosa4f"
+path="res://.godot/imported/THROW.png-e2ae3fbb8befd5668b3c4f46810bb7ff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/light attack.png"
-dest_files=["res://.godot/imported/light attack.png-8ed09a14218949221c06df12f630c3f5.ctex"]
+source_file="res://assets/player-sprites/THROW.png"
+dest_files=["res://.godot/imported/THROW.png-e2ae3fbb8befd5668b3c4f46810bb7ff.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bul5kt1buhtvh"
-path="res://.godot/imported/run turnaround.png-b5f4ddf2622dd25e70f5b3b65d012922.ctex"
+uid="uid://bt7ohafre7q88"
+path="res://.godot/imported/WALL CONTACT.png-d4a833deb367e0fc6d25f0411f16d5ce.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/run turnaround.png"
-dest_files=["res://.godot/imported/run turnaround.png-b5f4ddf2622dd25e70f5b3b65d012922.ctex"]
+source_file="res://assets/player-sprites/WALL CONTACT.png"
+dest_files=["res://.godot/imported/WALL CONTACT.png-d4a833deb367e0fc6d25f0411f16d5ce.ctex"]
 
 [params]
 

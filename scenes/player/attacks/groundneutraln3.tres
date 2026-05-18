@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_srbc3")
-startup_frames = Array[int]([0, 1, 2, 3, 4, 5])
-active_frames = Array[int]([6, 7, 8, 9, 10])
-recovery_frames = Array[int]([11, 12, 13, 14, 15, 16])
+startup_frames = Vector2i(0, 5)
+active_frames = Vector2i(6, 10)
+recovery_frames = Vector2i(11, 16)
 metadata/_custom_type_script = "uid://bddpolynamjoj"

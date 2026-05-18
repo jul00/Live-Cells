@@ -1,8 +1,10 @@
 extends PlayerState
 
+var can_airdash: bool
+
 func enter():
 	super()
-	print("entered fall")
+	can_airdash = true
 	player.animator.play_fall()
 	
 func physics_update(delta: float):
@@ -11,12 +13,9 @@ func physics_update(delta: float):
 	
 	player.velocity += player.get_gravity() * delta
 	
-	if player.input_handler.dash_pressed():
+	if player.input_handler.dash_pressed() and player.can_airdash: 
 		state_machine.change_state(state_machine.get_node("AirDash"))
 		return
-	
-	if vertical_direction == 1:
-		player.velocity.y = player.fastfall_velocity
 	
 	player.velocity.x = move_toward( # air movement
 		player.velocity.x,
@@ -24,9 +23,9 @@ func physics_update(delta: float):
 		player.air_accel * delta
 	)
 	
-	if player.input_handler.attack_pressed():
-		state_machine.change_state(state_machine.get_node("AttackHandler"))
-		return
+	if player.input_buffer.buffered_action == InputBuffer.Action.ATTACK:
+		player.input_buffer.consume()
+		state_machine.change_state(state_machine.get_node("AirNeutralN"))
 		
 	if player.is_on_floor():
 		state_machine.change_state(state_machine.get_node("Land"))

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bl13skai02xe7"
-path="res://.godot/imported/normaldownair.png-7027ff6f6de743f72504f41b4e2f8b34.ctex"
+uid="uid://b067s2xopapff"
+path="res://.godot/imported/DASH.png-e66674785a4dee2e93f4909966bec587.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player-sprites/normaldownair.png"
-dest_files=["res://.godot/imported/normaldownair.png-7027ff6f6de743f72504f41b4e2f8b34.ctex"]
+source_file="res://assets/player-sprites/DASH.png"
+dest_files=["res://.godot/imported/DASH.png-e66674785a4dee2e93f4909966bec587.ctex"]
 
 [params]
 

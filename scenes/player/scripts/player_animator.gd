@@ -24,19 +24,19 @@ func play_land():
 	animated_sprite.play("Land")
 
 func play_norm1():
-	animated_sprite.play("Normal1")
+	animated_sprite.play("GroundNeutralN1")
 
 func play_norm2():
-	animated_sprite.play("Normal2")
+	animated_sprite.play("GroundNeutralN2")
 
 func play_norm3():
-	animated_sprite.play("Normal3")
+	animated_sprite.play("GroundNeutralN3")
 
-func play_norm_up():
-	animated_sprite.play("NormalUp")
+func play_up_norm():
+	animated_sprite.play("GroundUpN")
 
-func play_air_norm_down():
-	animated_sprite.play("AirNormalDown")
+func play_air_norm():
+	animated_sprite.play("AirNeutralN")
 
 func play_neutral_special():
 	animated_sprite.play("NeutralSpecial")

@@ -9,7 +9,7 @@ enum Action {
 	SPECIAL
 }
 
-var buffer_frames = 8
+var buffer_frames = 20
 
 var buffered_action : Action = Action.NONE
 var buffer_timer = 0
