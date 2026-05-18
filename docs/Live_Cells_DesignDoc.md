@@ -175,3 +175,71 @@ Revamped everything, focused more on platforming.
     - Implement level generation
     - Polish frame data and game feel
 
+# Week 16: Final Presentation
+## 1. Postmortem
+### What went well
+- [Write what worked well during development]
+- [Write what you are proud of]
+- [Write what systems ended up stronger than expected]
+
+### What would you change
+- [Write what you would redesign next time]
+- [Write what you would cut earlier]
+- [Write what you would scope differently]
+
+### Key learnings
+- [Write your biggest technical lesson]
+- [Write your biggest design lesson]
+- [Write what you learned about planning and scope]
+
+## 2. Architecture Reflection
+### Final architecture overview
+- [Summarize the final scene structure]
+- [Summarize the main gameplay systems]
+- [Summarize how the major systems connect]
+
+### Design patterns used
+- [List the patterns you used]
+- [Explain why they helped]
+- [Explain where they did not help as much]
+
+### What broke down
+- [List the weakest part of the architecture]
+- [List any systems that became difficult to maintain]
+- [List any refactors that were still needed]
+
+## 3. Code Statistics
+- Lines of code: [insert number]
+- Number of commits: [insert number]
+- Major refactors completed: [insert number]
+- Major bugs fixed: [insert number]
+
+## 4. Complete Credits
+### Art and assets
+- **Purchased asset pack:** Samurai Bundle 2D Pixel Art by Mattz Art from itch.io
+- **Environment assets:** Pixel Art Platformer - Village Props by Cainos from itch.io
+- **Environment assets:** Crystal World Platformer Set by Szadi art. from itch.io
+- **Environment assets:** Pixel Fantasy "Caves" by Szadi art. from itch.io
+- **Environment assets:** Pixel Platformer Castle by Szadi art. from itch.io
+- **Other art references and sprite sources:** [add any additional assets used in the final build]
+
+### Audio
+- [List all music sources]
+- [List all sound effect sources]
+
+### Code and tools
+- [List any third-party code, plugins, or tools]
+- [List any helper libraries or addons]
+
+### Playtesters
+- [List people who tested the game]
+- [List any feedback contributors]
+
+## 5. Final Submission Checklist
+- [ ] Final build exported successfully
+- [ ] Game runs without game-breaking bugs
+- [ ] Living document updated to final form
+- [ ] README updated with correct installation and controls
+- [ ] Credits are complete and accurate
+- [ ] Repository history reflects iterative development
+- [ ] Final presentation notes are ready
