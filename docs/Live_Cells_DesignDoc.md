@@ -221,11 +221,13 @@ Revamped everything, focused more on platforming.
 - **Environment assets:** Crystal World Platformer Set by Szadi art. from itch.io
 - **Environment assets:** Pixel Fantasy "Caves" by Szadi art. from itch.io
 - **Environment assets:** Pixel Platformer Castle by Szadi art. from itch.io
-- **Other art references and sprite sources:** [add any additional assets used in the final build]
+- **Environment assets:** Dark Dungeon by Raou from itch.io
 
 ### Audio
-- [List all music sources]
-- [List all sound effect sources]
+- **Sound effects:** Valorant Footstep - Sound Effect by FXStudioSounds on YouTube
+- **Sound effects:** Whoosh Sounds effects No copyright by YouTube Sound Effects on YouTube
+- **Sound effects:** Katana Sword Sound Effects by Sound Dimension on YouTube
+- **Background music:** 
 
 ### Code and tools
 - [List any third-party code, plugins, or tools]
