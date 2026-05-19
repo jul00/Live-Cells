@@ -45,7 +45,7 @@ const POOL_SIZE = 32
 @export var dash_pitch_scale: float = 1.0
 @export var dash_volume_db: float = -10.0
 @export var footstep_pitch_scale: float = 1.0
-@export var footstep_volume_db: float = -10.0
+@export var footstep_volume_db: float = -8.0
 
 @export_group("Weapon Settings")
 @export var bow_draw_pitch_scale: float = 1.0
@@ -55,14 +55,14 @@ const POOL_SIZE = 32
 
 @export_group("Character Settings")
 @export var boss_shout_pitch_scale: float = 2.0
-@export var boss_shout_volume_db: float = 15.0
+@export var boss_shout_volume_db: float = 17.0
 
 @export_group("Item Settings")
 @export var item_spawn_volume_db: float = -5.0
 @export var item_collect_volume_db: float = 0.0
 
 @export_group("Music Settings")
-@export var music_volume_db: float = -15.0
+@export var music_volume_db: float = -18.0
 
 func _ready() -> void:
 	# Ensure sounds play even when the game is paused

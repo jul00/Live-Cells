@@ -6,7 +6,7 @@
 bg_color = Color(0, 0.705882, 0, 1)
 
 [node name="UI" type="CanvasLayer" unique_id=598961091]
-process_mode = 3
+process_mode = 2
 script = ExtResource("1_c80kv")
 
 [node name="GameHUD" type="Control" parent="." unique_id=1067267675]

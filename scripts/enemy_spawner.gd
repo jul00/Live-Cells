@@ -5,9 +5,9 @@ extends Marker2D
 ## List of enemy scenes this spawner can choose from
 @export var enemy_scenes: Array[PackedScene] = []
 ## Time between spawns in seconds
-@export var spawn_interval: float = 0.5
+@export var spawn_interval: float = 0.1
 ## Maximum number of enemies this spawner allows to be alive at once
-@export var max_enemies: int = 30
+@export var max_enemies: int = 180
 ## Randomize spawn position horizontally by this amount
 @export var spawn_width: float = 200.0
 
