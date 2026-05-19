@@ -1,6 +1,6 @@
 extends CombatEntity
 
-enum State { IDLE, ROAM, APPROACH, ATTACK, COOLDOWN, DEATH}
+enum State { IDLE, ROAM, APPROACH, PRE_ATTACK, ATTACK, COOLDOWN, DEATH}
 
 @export var speed: float = 40.0
 @export var gravity_multiplier: float = 1.0
@@ -53,6 +53,8 @@ func _physics_process(delta: float) -> void:
 			process_roam(delta)
 		State.APPROACH:
 			process_approach(delta)
+		State.PRE_ATTACK:
+			_process_pre_attack(delta)
 		State.COOLDOWN:
 			process_cooldown(delta)
 		State.ATTACK:
@@ -71,6 +73,9 @@ func change_state(new_state: State) -> void:
 			is_roaming = false
 		State.ATTACK:
 			is_sliding = false
+		State.PRE_ATTACK:
+			# Ensure the telegraph color is cleared if interrupted
+			sprite.modulate = Color.WHITE
 			
 	current_state = new_state
 	state_timer = 0.0
@@ -81,6 +86,9 @@ func change_state(new_state: State) -> void:
 			velocity.x = 0
 			if randf() < 0.4:
 				perform_look_around()
+		State.PRE_ATTACK:
+			velocity.x = 0
+			sprite.play("idle")
 		State.ATTACK:
 			will_chain_attack = randf() <= 0.33
 			start_attack("atk1")
@@ -96,7 +104,7 @@ func _evaluate_combat_state() -> void:
 		change_state(State.APPROACH)
 	elif current_state == State.APPROACH:
 		if dist <= attack_range:
-			change_state(State.ATTACK)
+			change_state(State.PRE_ATTACK)
 	elif current_state == State.ATTACK:
 		# Don't evaluate new states while attacking
 		return
@@ -106,8 +114,9 @@ func _evaluate_combat_state() -> void:
 
 func start_attack(anim_name: String) -> void:
 	sprite.play(anim_name)
-	if AudioManager:
-		AudioManager.play_sfx("hit")
+	var am = get_node_or_null("/root/AudioManager")
+	if am:
+		am.play_sfx("hit")
 
 	# Set position immediately so it's correct during the wind-up
 	if hitbox_profiles.has(anim_name) and attack_shape:
@@ -131,6 +140,18 @@ func start_attack(anim_name: String) -> void:
 	if is_instance_valid(target_player):
 		var dir_x = 1 if target_player.global_position.x > global_position.x else -1
 		_update_facing(dir_x)
+
+func _process_pre_attack(delta: float) -> void:
+	state_timer += delta
+	# Yellow blinking effect: 0.1s intervals
+	if int(state_timer * 10) % 2 == 0:
+		sprite.modulate = Color(15, 15, 0, 1) # Yellow telegraph
+	else:
+		sprite.modulate = Color.WHITE
+		
+	if state_timer >= 0.7:
+		sprite.modulate = Color.WHITE
+		change_state(State.ATTACK)
 
 func process_idle(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 400 * delta)
@@ -250,8 +271,11 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 	var final_damage = super.receive_hit(damage, attacker)
 	if health <= 0:
 		change_state(State.DEATH)
+	elif current_state in [State.PRE_ATTACK, State.ATTACK]:
+		# Super Armor: Don't flinch (stay in attack/telegraph), just flash
+		play_hit_flash()
 	else:
-		play_hit_flash() # Fixed: ensure flash plays since we override change_state(HURT)
+		play_hit_flash()
 	return final_damage
 
 func play_hit_flash():

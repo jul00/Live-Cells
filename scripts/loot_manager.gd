@@ -1,6 +1,6 @@
 extends Node
 
-@export var drop_chance: float = 1
+@export var drop_chance: float = 0.2
 
 const HEALTH_ITEM_SCENE = preload("res://scenes/health_items.tscn")
 
@@ -36,7 +36,9 @@ func spawn_loot(pos: Vector2) -> void:
 	add_child(item)
 	item.global_position = pos
 	
-	AudioManager.play_sfx("item_spawn")
+	var am = get_node_or_null("/root/AudioManager")
+	if am:
+		am.play_sfx("item_spawn")
 	
 	var item_name = loot_table.keys().pick_random()
 	var data = loot_table[item_name]

@@ -1,11 +1,12 @@
 extends CombatEntity
 
-enum State { IDLE, ROAM, APPROACH, COMBAT, DEFEND, DASH_ATTACK, THROW, HURT, EVADE, DEATH}
+enum State { IDLE, ROAM, APPROACH, PRE_ATTACK, COMBAT, DEFEND, DASH_ATTACK, THROW, HURT, EVADE, DEATH}
 
 @export_group("Movement")
 @export var speed: float = 100.0
 @export var roam_speed: float = 40.0
 @export var gravity_multiplier: float = 1.0
+const FACING_DEADZONE: float = 10.0
 
 @export_group("Combat")
 @export var detection_range: float = 100.0
@@ -72,6 +73,8 @@ func _physics_process(delta: float) -> void:
 			_process_roam(delta)
 		State.APPROACH:
 			_process_approach(delta)
+		State.PRE_ATTACK:
+			_process_pre_attack(delta)
 		State.COMBAT:
 			_process_combat(delta)
 		State.DEFEND:
@@ -96,6 +99,9 @@ func change_state(new_state: State) -> void:
 	match current_state:
 		State.ROAM:
 			is_roaming = false
+		State.PRE_ATTACK:
+			# Ensure the telegraph color is cleared if interrupted
+			sprite.modulate = Color.WHITE
 
 	current_state = new_state
 	state_timer = 0.0
@@ -106,6 +112,9 @@ func change_state(new_state: State) -> void:
 			velocity.x = 0
 			if randf() < 0.4:
 				perform_look_around()
+		State.PRE_ATTACK:
+			velocity.x = 0
+			sprite.play("idle")
 		State.COMBAT:
 			velocity.x = 0
 			combo_step = 0
@@ -128,8 +137,9 @@ func change_state(new_state: State) -> void:
 			sprite.play("hurt")
 		State.EVADE:
 			if is_instance_valid(target_player):
-				if AudioManager:
-					AudioManager.play_sfx("dash")
+				var am = get_node_or_null("/root/AudioManager")
+				if am:
+					am.play_sfx("dash")
 				var dir_away = -1 if target_player.global_position.x > global_position.x else 1
 				velocity.x = dir_away * evade_speed
 				_update_facing(-dir_away) # Face the player while moving away
@@ -150,7 +160,7 @@ func _evaluate_combat_state() -> void:
 		change_state(State.APPROACH)
 	elif current_state == State.APPROACH:
 		if dist <= attack_range:
-			change_state(State.COMBAT)
+			change_state(State.PRE_ATTACK)
 		elif shuriken_timer <= 0 and dist >= buffer_range_min and dist <= buffer_range_max:
 			var relative_vel_x = target_player.velocity.x
 			var dist_x = target_player.global_position.x - global_position.x
@@ -191,20 +201,35 @@ func _process_roam(_delta: float) -> void:
 		change_state(State.IDLE)
 
 func _process_approach(_delta: float) -> void:
-
 	if not is_instance_valid(target_player):
 		change_state(State.IDLE)
 		return
 		
 	var dist_x = target_player.global_position.x - global_position.x
-	var dir_x = 1 if dist_x > 0 else -1
+	var dir_x = sign(dist_x)
 	
-	_update_facing(dir_x)
+	# Deadzone to prevent jittering when close to player
+	if abs(dist_x) > FACING_DEADZONE:
+		_update_facing(dir_x)
+		
 	velocity.x = dir_x * speed
 	
+	# Standardized ledge safety
 	if is_on_floor() and not ray_cast.is_colliding():
 		velocity.x = 0
 		change_state(State.IDLE)
+
+func _process_pre_attack(delta: float) -> void:
+	state_timer += delta
+	# Yellow blinking every 0.1s
+	if int(state_timer * 10) % 2 == 0:
+		sprite.modulate = Color(15, 15, 0, 1)
+	else:
+		sprite.modulate = Color.WHITE
+		
+	if state_timer >= 0.6:
+		sprite.modulate = Color.WHITE
+		change_state(State.COMBAT)
 
 func _process_combat(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 800 * delta)
@@ -212,8 +237,10 @@ func _process_combat(delta: float) -> void:
 		change_state(State.IDLE)
 		return
 		
-	var dir_x = 1 if target_player.global_position.x > global_position.x else -1
-	_update_facing(dir_x)
+	var dist_x = target_player.global_position.x - global_position.x
+	# Only update facing during combat if the player moves past the deadzone
+	if abs(dist_x) > FACING_DEADZONE:
+		_update_facing(sign(dist_x))
 
 func _process_defend(delta: float) -> void:
 	state_timer += delta
@@ -323,9 +350,13 @@ func _on_detection_area_body_exited(body: Node2D) -> void:
 
 func _update_facing(dir_x: float) -> void:
 	if dir_x == 0: return
-	sprite.flip_h = dir_x < 0
-	ray_cast.position.x = 15 if dir_x > 0 else -15
-	update_combat_facing()
+	var wants_left = dir_x < 0
+	if sprite.flip_h != wants_left:
+		sprite.flip_h = wants_left
+		# Shoto native faces RIGHT. flip_h=true is LEFT.
+		# If wants_left (true), ray should be on the left (-15).
+		ray_cast.position.x = -15 if wants_left else 15
+		update_combat_facing()
 
 func _update_animations() -> void:
 	if current_state in [State.COMBAT, State.DASH_ATTACK, State.DEFEND, State.THROW, State.HURT, State.EVADE, State.DEATH]:
@@ -351,8 +382,9 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 			was_blocked = true
 			sprite.stop()
 			sprite.play("defend") # Show the block on hit
-			if AudioManager:
-				AudioManager.play_sfx("block")
+			var am = get_node_or_null("/root/AudioManager")
+			if am:
+				am.play_sfx("block")
 			final_damage *= 0.1 # 90% reduction
 			print(name, " blocked hit!")
 			
@@ -383,6 +415,18 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 		return final_damage
 
 	if not was_blocked:
-		change_state(State.HURT)
+		if current_state not in [State.PRE_ATTACK, State.COMBAT, State.DASH_ATTACK, State.THROW]:
+			change_state(State.HURT)
+		else:
+			play_hit_flash()
 		
 	return final_damage
+
+func play_hit_flash():
+	if not sprite: return
+	
+	var tween = create_tween()
+	# Intensified white flash (values above 1.0 wash out colors to white in Godot)
+	sprite.modulate = Color(15, 15, 15, 1) 
+	# Transition back to normal (Color.WHITE) over 0.15 seconds for a smoother effect
+	tween.tween_property(sprite, "modulate", Color.WHITE, 0.15)

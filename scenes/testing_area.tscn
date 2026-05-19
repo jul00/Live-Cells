@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dal5yhk605c8t" path="res://scenes/rushdown_enemy.tscn" id="6_mmyom"]
 [ext_resource type="PackedScene" uid="uid://dqlcynhf1g6vh" path="res://scenes/ui.tscn" id="7_467br"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mmyom"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_467br"]
 texture = ExtResource("1_mb3qh")
 0:0/0 = 0
 1:0/0 = 0
@@ -882,7 +882,7 @@ physics_layer_0/collision_mask = 255
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Terrain 0"
 terrain_set_0/terrain_0/color = Color(1.1551381e-06, 0.6458744, 0.81315887, 1)
-sources/0 = SubResource("TileSetAtlasSource_mmyom")
+sources/0 = SubResource("TileSetAtlasSource_467br")
 
 [node name="TestingArea" type="Node2D" unique_id=211016338]
 
@@ -905,7 +905,7 @@ position = Vector2(610, -99.00001)
 position = Vector2(1256, -100)
 
 [node name="ShotoEnemy" parent="." unique_id=399231233 instance=ExtResource("5_ujok3")]
-position = Vector2(518, -624)
+position = Vector2(1132, -401)
 
 [node name="RushdownEnemy" parent="." unique_id=632074443 instance=ExtResource("6_mmyom")]
 position = Vector2(899, -103.99999)

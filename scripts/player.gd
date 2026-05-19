@@ -1,7 +1,7 @@
 extends CombatEntity
 
 const SPEED = 150.0
-const JUMP_VELOCITY = -320.0
+const JUMP_VELOCITY = -330.0
 const COMBO_GRACE_TIME = 0.7
 const WALL_SLIDE_SPEED = 100.0
 const WALL_JUMP_PUSH = 200.0
@@ -79,11 +79,13 @@ func _physics_process(delta: float) -> void:
 	
 	# Footstep SFX logic
 	if is_on_floor() and abs(velocity.x) > 10.0 and current_state == State.MOVE:
-		if AudioManager and not AudioManager.is_playing("footstep"):
-			AudioManager.play_sfx("footstep")
+		var am = get_node_or_null("/root/AudioManager")
+		if am and not am.is_playing("footstep"):
+			am.play_sfx("footstep")
 	else:
-		if AudioManager and AudioManager.is_playing("footstep"):
-			AudioManager.stop_sfx("footstep")
+		var am = get_node_or_null("/root/AudioManager")
+		if am and am.is_playing("footstep"):
+			am.stop_sfx("footstep")
 	
 	handle_combat_input()
 	
@@ -140,7 +142,8 @@ func receive_hit(damage: float, attacker: Node2D):
 		print("Invincible during dash!")
 		return 0.0
 	elif current_state == State.DEFEND:
-		AudioManager.play_sfx("block")
+		var am = get_node_or_null("/root/AudioManager")
+		if am: am.play_sfx("block")
 		# Block the hit: play the animation and ensure velocity is zero
 		sprite.play("defend")
 		velocity = Vector2.ZERO
@@ -151,11 +154,13 @@ func receive_hit(damage: float, attacker: Node2D):
 	else:
 		# Take full damage and enter HURT state
 		change_state(State.HURT)
-		AudioManager.play_sfx("hit")
+		var am = get_node_or_null("/root/AudioManager")
+		if am: am.play_sfx("hit")
 		
 		# Trigger Hit Stop
-		if LootManager:
-			LootManager.trigger_hit_stop(0.05)
+		var lm = get_node_or_null("/root/LootManager")
+		if lm:
+			lm.trigger_hit_stop(0.05)
 		
 		# Calculate direction of spray (away from attacker)
 		var spray_rot = 0.0
@@ -218,7 +223,8 @@ func handle_movement_input(delta: float):
 	velocity.x = move_toward(velocity.x, 0, friction)
 
 func attack():
-	AudioManager.play_sfx("hit")
+	var am = get_node_or_null("/root/AudioManager")
+	if am: am.play_sfx("hit")
 	if current_state == State.JUMP:
 		change_state(State.ATTACK, "air-atk")
 		activate_hitbox("air-atk", true)
@@ -250,7 +256,8 @@ func handle_combat_input():
 #		combo_step = -1
 
 	if Input.is_action_just_pressed("dash") and can_dash:
-		AudioManager.play_sfx("dash")
+		var am = get_node_or_null("/root/AudioManager")
+		if am: am.play_sfx("dash")
 		change_state(State.DASH)
 		var dash_dir = -1 if sprite.flip_h else 1
 		velocity.x = dash_dir * dash_speed
@@ -279,7 +286,8 @@ func _on_animation_finished():
 			combo_step = (combo_step + 1) % attack_animations.size()
 			change_state(State.ATTACK, attack_animations[combo_step])
 			activate_hitbox(attack_animations[combo_step], true)
-			AudioManager.play_sfx("hit")
+			var am = get_node_or_null("/root/AudioManager")
+			if am: am.play_sfx("hit")
 		else:
 			change_state(State.MOVE)
 	elif current_state == State.DASH:
@@ -288,7 +296,9 @@ func _on_animation_finished():
 	elif current_state == State.HURT:
 		change_state(State.MOVE)
 	elif current_state == State.DEATH:
-		get_tree().paused = true
+		var gm = get_node_or_null("/root/GameManager")
+		if gm:
+			gm.game_over()
 	if current_state == State.WALL and sprite.animation == "wall-contact":
 		sprite.play("wall-slide")
 

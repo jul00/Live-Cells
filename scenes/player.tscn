@@ -18,6 +18,8 @@
 [ext_resource type="Texture2D" uid="uid://bsud1g7m2mt2k" path="res://assets/FULL_Samurai 2D Pixel Art v1.2/Sprites/WALL CONTACT.png" id="16_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://ct5s4q4jin3h2" path="res://assets/FULL_Samurai 2D Pixel Art v1.2/Sprites/WALL JUMP.png" id="17_fulsm"]
 [ext_resource type="Texture2D" uid="uid://5c74lsprmcqq" path="res://assets/FULL_Samurai 2D Pixel Art v1.2/Sprites/WALL SLIDE.png" id="18_4r5pv"]
+[ext_resource type="Texture2D" uid="uid://ckrtmwhcpbcji" path="res://assets/Parallax/Clouds 7/1.png" id="19_60mlk"]
+[ext_resource type="Texture2D" uid="uid://co74owoq1awu1" path="res://assets/Parallax/Clouds 7/2.png" id="20_i4ail"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wqfne"]
 atlas = ExtResource("1_tuyoq")
@@ -852,11 +854,11 @@ radius = 20.039024
 radius = 6.2499995
 
 [node name="Player" type="CharacterBody2D" unique_id=1856583299]
-z_index = 5
 scale = Vector2(0.8, 0.8)
 script = ExtResource("1_oprun")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1798486897]
+z_index = 5
 position = Vector2(-1.2500002, -32.5)
 sprite_frames = SubResource("SpriteFrames_u8vuu")
 animation = &"atk3"
@@ -883,10 +885,30 @@ shape = SubResource("CircleShape2D_fulsm")
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1617853932]
 visible = false
 monitoring = false
-monitorable = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=814332094]
 position = Vector2(0, -14.999998)
 shape = SubResource("CapsuleShape2D_4r5pv")
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=2059575190]
+
+[node name="TextureRect" type="TextureRect" parent="Parallax2D" unique_id=640682327]
+z_index = -5
+offset_left = -318.75
+offset_top = -210.0
+offset_right = 319.99988
+offset_bottom = 129.99997
+texture = ExtResource("19_60mlk")
+
+[node name="Parallax2D2" type="Parallax2D" parent="." unique_id=308534333]
+repeat_times = 999
+
+[node name="TextureRect" type="TextureRect" parent="Parallax2D2" unique_id=1756085926]
+z_index = -4
+offset_left = -318.75
+offset_top = -226.24997
+offset_right = 319.99988
+offset_bottom = 129.00003
+texture = ExtResource("20_i4ail")
 
 [connection signal="area_entered" from="AttackArea" to="." method="_on_attack_area_area_entered"]

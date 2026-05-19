@@ -72,13 +72,10 @@ A high-octane 2D Pixel Art Samurai action-platformer built in Godot 4. Features 
 
 ---
 
-## 📅 Roadmap
-See [TODO.md](./TODO.md) for the full list of planned features and suggestions.
-
 ## Audio:
-https://www.youtube.com/shorts/1GwOKlggHWI
-https://www.youtube.com/results?search_query=japanese+background+music+for+vlog
-https://www.youtube.com/watch?v=pqEn9icjK0I
-https://www.youtube.com/watch?v=Ds9zM_tfTKA
-https://raou.itch.io/dark-dun
-https://itch.io/s/110075/samurai-bundle-2d-pixel-art
+- https://www.youtube.com/shorts/1GwOKlggHWI
+- https://www.youtube.com/results?search_query=japanese+background+music+for+vlog
+- https://www.youtube.com/watch?v=pqEn9icjK0I
+- https://www.youtube.com/watch?v=Ds9zM_tfTKA
+- https://raou.itch.io/dark-dun
+- https://itch.io/s/110075/samurai-bundle-2d-pixel-art

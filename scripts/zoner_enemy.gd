@@ -1,6 +1,6 @@
 extends CombatEntity
 
-enum State { IDLE, ROAM, CHASE, FLEE, SPACING, ATTACK, HURT, DEATH, EVADE}
+enum State { IDLE, ROAM, CHASE, FLEE, SPACING, PRE_ATTACK, ATTACK, HURT, DEATH, EVADE}
 
 @export var speed: float = 80.0
 @export var roam_speed: float = 30.0
@@ -57,6 +57,8 @@ func _physics_process(delta: float) -> void:
 				process_flee(delta)
 			State.SPACING:
 				process_spacing(delta)
+			State.PRE_ATTACK:
+				process_pre_attack(delta)
 			State.ATTACK:
 				process_attack(delta)
 			State.HURT:
@@ -92,6 +94,9 @@ func change_state(new_state: State) -> void:
 	match current_state:
 		State.ROAM:
 			is_roaming = false
+		State.PRE_ATTACK:
+			# Ensure the telegraph color is cleared if interrupted
+			sprite.modulate = Color.WHITE
 	
 	current_state = new_state
 	state_timer = 0.0
@@ -101,6 +106,9 @@ func change_state(new_state: State) -> void:
 		State.IDLE:
 			if randf() < 0.4:
 				perform_look_around()
+		State.PRE_ATTACK:
+			velocity.x = 0
+			sprite.play("idle")
 		State.ATTACK:
 			velocity.x = 0 # Stop moving when starting an attack
 			# 33% chance to do a special attack
@@ -120,8 +128,9 @@ func change_state(new_state: State) -> void:
 			sprite.play("die")
 		State.EVADE:
 			if is_instance_valid(target_player):
-				if AudioManager:
-					AudioManager.play_sfx("dash")
+				var am = get_node_or_null("/root/AudioManager")
+				if am:
+					am.play_sfx("dash")
 				var dir_away = -1 if target_player.global_position.x > global_position.x else 1
 				velocity.x = dir_away * evade_speed
 				# Face the player while dashing away
@@ -190,13 +199,25 @@ func process_spacing(_delta: float) -> void:
 		return
 
 	if attack_timer.is_stopped():
-		change_state(State.ATTACK)
+		change_state(State.PRE_ATTACK)
 		return
 
 	# While spacing and waiting for cooldown, back-pedal
 	var dir_to_player = (target_player.global_position - global_position).normalized()
 	velocity.x = -dir_to_player.x * speed
 	evaluate_combat_state()
+
+func process_pre_attack(delta: float) -> void:
+	state_timer += delta
+	# Yellow blinking telegraph
+	if int(state_timer * 10) % 2 == 0:
+		sprite.modulate = Color(15, 15, 0, 1) # Yellow highlight
+	else:
+		sprite.modulate = Color.WHITE
+		
+	if state_timer >= 0.8: # Longer telegraph for zoner
+		sprite.modulate = Color.WHITE
+		change_state(State.ATTACK)
 
 func process_attack(_delta: float) -> void:
 	velocity.x = 0 # Ensure we stand still
@@ -226,7 +247,7 @@ func evaluate_combat_state() -> void:
 		change_state(State.EVADE)
 	elif dist <= engagement_zone_dist:
 		if attack_timer.is_stopped():
-			change_state(State.ATTACK)
+			change_state(State.PRE_ATTACK)
 		else:
 			change_state(State.SPACING)
 	else:
@@ -234,8 +255,9 @@ func evaluate_combat_state() -> void:
 
 func execute_attack(anim_name: String) -> void:
 	sprite.play(anim_name)
-	if AudioManager:
-		AudioManager.play_sfx("bow_draw")
+	var am = get_node_or_null("/root/AudioManager")
+	if am:
+		am.play_sfx("bow_draw")
 	attack_timer.start(2.5) # 2.5 second cooldown between attacks
 
 func spawn_arrow(angle_offset: float, height_offset: float = 0.0) -> void:
@@ -243,8 +265,9 @@ func spawn_arrow(angle_offset: float, height_offset: float = 0.0) -> void:
 	get_tree().root.add_child(arrow)
 	arrow.global_position = muzzle.global_position + Vector2(0, height_offset)
 	
-	if AudioManager:
-		AudioManager.play_sfx("bow_shoot")
+	var am = get_node_or_null("/root/AudioManager")
+	if am:
+		am.play_sfx("bow_shoot")
 	
 	# Shoot horizontally in the direction the Archer is facing
 	var face_dir = -1 if sprite.flip_h else 1
@@ -321,8 +344,19 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 		change_state(State.EVADE)
 		return final_damage
 
+	# Super Armor: Ignore HURT state during PRE_ATTACK and ATTACK
+	if current_state in [State.PRE_ATTACK, State.ATTACK]:
+		play_hit_flash()
+		return final_damage
+
 	change_state(State.HURT)
 	return final_damage
+
+func play_hit_flash() -> void:
+	if not sprite: return
+	var tween = create_tween()
+	sprite.modulate = Color(15, 15, 15, 1)
+	tween.tween_property(sprite, "modulate", Color.WHITE, 0.1)
 
 func update_facing() -> void:
 	var face_dir = 0
@@ -341,15 +375,7 @@ func update_facing() -> void:
 func update_animations() -> void:
 	update_facing()
 	
-	if current_state in [State.ATTACK, State.HURT, State.DEATH, State.EVADE]:
-		# Attack, hurt and death animations are handled separately
-		return
-		
-	if abs(velocity.x) > 0:
-		sprite.play("run")
-	else:
-		sprite.play("idle")
-
+	if current_state in [State.PRE_ATTACK, State.ATTACK, State.HURT, State.DEATH, State.EVADE]:
 		# Attack, hurt and death animations are handled separately
 		return
 		

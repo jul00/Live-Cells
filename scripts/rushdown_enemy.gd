@@ -1,11 +1,13 @@
 extends CombatEntity
 
-enum State { IDLE, ROAM, APPROACH, COMBAT, DEFEND, HURT, DEATH }
+enum State { IDLE, ROAM, APPROACH, PRE_ATTACK, COMBAT, DEFEND, HURT, DEATH }
 
 @export_group("Movement")
 @export var speed: float = 180.0 # Faster than Shoto
 @export var roam_speed: float = 60.0
 @export var gravity_multiplier: float = 1.0
+
+const FACING_DEADZONE: float = 10.0
 
 @export_group("Combat")
 @export var detection_range: float = 250.0
@@ -72,6 +74,8 @@ func _physics_process(delta: float) -> void:
 			_process_defend(delta)
 		State.HURT:
 			_process_hurt(delta)
+		State.PRE_ATTACK:
+			_process_pre_attack(delta)
 
 	move_and_slide()
 	_update_animations()
@@ -84,6 +88,9 @@ func change_state(new_state: State) -> void:
 	match current_state:
 		State.ROAM:
 			is_roaming = false
+		State.PRE_ATTACK:
+			# Ensure the telegraph color is cleared if interrupted
+			sprite.modulate = Color.WHITE
 	
 	current_state = new_state
 	state_timer = 0.0
@@ -113,6 +120,9 @@ func change_state(new_state: State) -> void:
 			velocity.x = 0
 			activate_hitbox("", false)
 			sprite.play("die")
+		State.PRE_ATTACK:
+			velocity.x = 0
+			sprite.play("idle")
 
 func _evaluate_combat_logic(_delta: float) -> void:
 	if current_state == State.DEATH:
@@ -127,7 +137,7 @@ func _evaluate_combat_logic(_delta: float) -> void:
 		change_state(State.APPROACH)
 	elif current_state == State.APPROACH:
 		if dist <= attack_range:
-			change_state(State.COMBAT)
+			change_state(State.PRE_ATTACK)
 	elif current_state == State.COMBAT:
 		# If player gets away during combo wind-up
 		if dist > attack_range * 1.8 and sprite.animation not in ["atk1", "atk2"]:
@@ -164,15 +174,30 @@ func _process_approach(_delta: float) -> void:
 	var dist_x = target_player.global_position.x - global_position.x
 	var dir_x = sign(dist_x)
 	
-	_update_facing(dir_x)
+	# Deadzone to prevent jittering
+	if abs(dist_x) > FACING_DEADZONE:
+		_update_facing(dir_x)
+		
 	velocity.x = dir_x * speed
 	
-	# Ledge safety
+	# Standardized ledge safety
 	if is_on_floor() and not ray_cast.is_colliding():
 		velocity.x = 0
+		change_state(State.IDLE)
 
 func _process_combat(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 600 * delta)
+
+func _process_pre_attack(delta: float) -> void:
+	state_timer += delta
+	if int(state_timer * 10) % 2 == 0:
+		sprite.modulate = Color(15, 15, 0, 1)
+	else:
+		sprite.modulate = Color.WHITE
+		
+	if state_timer >= 0.5: # Faster telegraph for rushdown
+		sprite.modulate = Color.WHITE
+		change_state(State.COMBAT)
 
 func _process_defend(delta: float) -> void:
 	state_timer += delta
@@ -232,10 +257,13 @@ func _on_animation_finished() -> void:
 
 func _update_facing(dir_x: float) -> void:
 	if dir_x == 0: return
-	# Native faces RIGHT
-	sprite.flip_h = dir_x < 0
-	ray_cast.position.x = 24 if dir_x > 0 else -24
-	update_combat_facing()
+	var wants_left = dir_x < 0
+	if sprite.flip_h != wants_left:
+		sprite.flip_h = wants_left
+		# Rushdown native faces RIGHT. flip_h=true is LEFT.
+		# If wants_left (true), ray should be on the left (-24).
+		ray_cast.position.x = -24 if wants_left else 24
+		update_combat_facing()
 
 func _update_animations() -> void:
 	if current_state in [State.COMBAT, State.DEFEND, State.HURT, State.DEATH]:
@@ -261,8 +289,9 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 			was_blocked = true
 			sprite.stop()
 			sprite.play("defend") # Show impact
-			if AudioManager:
-				AudioManager.play_sfx("block")
+			var am = get_node_or_null("/root/AudioManager")
+			if am:
+				am.play_sfx("block")
 			final_damage *= 0.1 # 90% reduction
 			print(name, " blocked hit!")
 			
@@ -298,7 +327,10 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 		return final_damage
 
 	if not was_blocked:
-		change_state(State.HURT)
+		if current_state not in [State.PRE_ATTACK, State.COMBAT]:
+			change_state(State.HURT)
+		else:
+			play_hit_flash()
 		
 	return final_damage
 
@@ -309,3 +341,10 @@ func _on_detection_area_body_entered(body: Node2D) -> void:
 func _on_detection_area_body_exited(body: Node2D) -> void:
 	if target_player == body:
 		target_player = null
+
+func play_hit_flash():
+	if not sprite: return
+	
+	var tween = create_tween()
+	sprite.modulate = Color(15, 15, 15, 1) 
+	tween.tween_property(sprite, "modulate", Color.WHITE, 0.15)

@@ -29,7 +29,8 @@ var streams: Dictionary = {}
 # Pool of AudioStreamPlayers
 var players: Array[AudioStreamPlayer] = []
 var music_player: AudioStreamPlayer
-const POOL_SIZE = 16
+var next_player_index: int = 0
+const POOL_SIZE = 32
 
 @export_group("Hit Sound Settings")
 @export var hit_pitch_scale: float = 1.0
@@ -53,15 +54,15 @@ const POOL_SIZE = 16
 @export var bow_shoot_volume_db: float = 0.0
 
 @export_group("Character Settings")
-@export var boss_shout_pitch_scale: float = 0.8
-@export var boss_shout_volume_db: float = 5.0
+@export var boss_shout_pitch_scale: float = 2.0
+@export var boss_shout_volume_db: float = 15.0
 
 @export_group("Item Settings")
 @export var item_spawn_volume_db: float = -5.0
 @export var item_collect_volume_db: float = 0.0
 
 @export_group("Music Settings")
-@export var music_volume_db: float = -25.0
+@export var music_volume_db: float = -15.0
 
 func _ready() -> void:
 	# Ensure sounds play even when the game is paused
@@ -104,9 +105,13 @@ func play_sfx(lib_name: String, p_min: float = 0.9, p_max: float = 1.1) -> void:
 		
 	var random_stream = stream_list.pick_random()
 	
+	# Sequential (Round-Robin) selection strategy
+	# This ensures we favor idle players, but if all are busy, we steal the oldest one
+	# by cycling through the pool in order.
 	var player = _get_available_player()
 	if not player:
-		player = players.pick_random()
+		player = players[next_player_index]
+		next_player_index = (next_player_index + 1) % POOL_SIZE
 	
 	if player:
 		player.stream = random_stream
@@ -187,7 +192,11 @@ func is_playing(lib_name: String) -> bool:
 	return false
 
 func _get_available_player() -> AudioStreamPlayer:
-	for p in players:
+	for i in range(POOL_SIZE):
+		var idx = (next_player_index + i) % POOL_SIZE
+		var p = players[idx]
 		if not p.playing:
+			# Advance the index so the next call starts from here
+			next_player_index = (idx + 1) % POOL_SIZE
 			return p
 	return null

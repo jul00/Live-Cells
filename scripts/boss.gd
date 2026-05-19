@@ -87,6 +87,9 @@ func change_state(new_state: State) -> void:
 	match current_state:
 		State.ROAM:
 			is_roaming = false
+		State.PRE_ATTACK:
+			# Ensure the telegraph color is cleared if interrupted
+			sprite.modulate = Color.WHITE
 	
 	current_state = new_state
 	state_timer = 0.0
@@ -106,8 +109,9 @@ func change_state(new_state: State) -> void:
 		State.SHOUT:
 			velocity.x = 0
 			shout_triggered = true
+			_start_attack("shout")
+			
 			var anim = get_anim("shout")
-			sprite.play(anim)
 			
 			# Calculate 4/5 duration of the animation
 			var frames = sprite.sprite_frames.get_frame_count(anim)
@@ -241,8 +245,9 @@ func _process_hurt(delta: float) -> void:
 
 func _start_attack(anim_name: String):
 	sprite.play(get_anim(anim_name))
-	if anim_name == "shout" and AudioManager:
-		AudioManager.play_sfx("shout")
+	var am = get_node_or_null("/root/AudioManager")
+	if anim_name == "shout" and am:
+		am.play_sfx("shout")
 
 	activate_hitbox(anim_name, true)
 
@@ -292,6 +297,9 @@ func _on_animation_finished():
 			pass # Process handles recovery
 		State.DEATH:
 			handle_death(global_position)
+			var gm = get_node_or_null("/root/GameManager")
+			if gm:
+				gm.win_game()
 			queue_free()
 
 func _update_facing(dir_x: float) -> void:
@@ -323,8 +331,9 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 			was_blocked = true
 			sprite.stop()
 			sprite.play(get_anim("defend")) # Show the block on hit
-			if AudioManager:
-				AudioManager.play_sfx("block")
+			var am = get_node_or_null("/root/AudioManager")
+			if am:
+				am.play_sfx("block")
 			final_damage *= 0.1 # 90% damage reduction
 			print("BOSS BLOCKED! (Frontal Hit) Reduced damage: ", final_damage)
 
@@ -379,7 +388,10 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 
 	# Note: Boss is now a Juggernaut (Super Armor).
 	# We no longer change_state(State.HURT) except for blocked hits which already return early.
-	if not was_blocked and current_state != State.SHOUT:
+	# Let's ensure this is robust.
+	if not was_blocked and current_state not in [State.SHOUT, State.PRE_ATTACK, State.COMBAT]:
+		# Only play flash if not in a state that should be interrupted
+		# Actually, boss already doesn't have a HURT transition here.
 		play_hit_flash()
 
 	return final_damage

@@ -13,9 +13,9 @@ var current_active_profile_id: String = ""
 var is_dead: bool = false
 
 @onready var sprite = $AnimatedSprite2D
-@onready var attack_area = $AttackArea
-@onready var attack_shape = $AttackArea/CollisionShape2D
-@onready var hurtbox_shape = $Hurtbox/CollisionShape2D
+@onready var attack_area = get_node_or_null("AttackArea")
+@onready var attack_shape = get_node_or_null("AttackArea/CollisionShape2D")
+@onready var hurtbox_shape = get_node_or_null("Hurtbox/CollisionShape2D")
 
 func _ready():
 	if attack_area:
@@ -43,12 +43,14 @@ func receive_hit(damage: float, attacker: Node2D) -> float:
 	health -= damage
 	
 	# Trigger Hit Stop (0.05s)
-	if LootManager:
-		LootManager.trigger_hit_stop(0.05)
+	var lm = get_node_or_null("/root/LootManager")
+	if lm:
+		lm.trigger_hit_stop(0.05)
 		
 	# Trigger Hit Sound
-	if AudioManager:
-		AudioManager.play_sfx("hit")
+	var am = get_node_or_null("/root/AudioManager")
+	if am:
+		am.play_sfx("hit")
 	
 	# Calculate direction of spray (away from attacker)
 	var spray_rot = 0.0
@@ -127,9 +129,10 @@ func handle_death(spawn_pos: Vector2):
 		return
 	spawn_particles(DEATH_FX, spawn_pos)
 	is_dead = true
-	if LootManager:
+	var lm = get_node_or_null("/root/LootManager")
+	if lm:
 		get_tree().create_timer(0.5).timeout.connect(func():
-			LootManager.spawn_loot(spawn_pos)
+			lm.spawn_loot(spawn_pos)
 		)
 
 func perform_look_around():
