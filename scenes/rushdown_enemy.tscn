@@ -434,7 +434,6 @@ animation = &"defend"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=610385276]
-visible = false
 position = Vector2(0, -15)
 shape = SubResource("CapsuleShape2D_7fa0c")
 
@@ -442,14 +441,12 @@ shape = SubResource("CapsuleShape2D_7fa0c")
 position = Vector2(24, -30)
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1771490712]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=2095720869]
 position = Vector2(0, -18)
 shape = SubResource("RectangleShape2D_7fa0c")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1043185166]
-visible = false
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=890589621]

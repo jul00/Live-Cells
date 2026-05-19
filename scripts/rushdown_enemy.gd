@@ -17,6 +17,7 @@ const FACING_DEADZONE: float = 10.0
 @export var stagger_recovery_time: float = 0.2
 @export var defend_chance: float = 0.6 # High chance to reactively block
 @export var counter_delay: float = 0.1 # Delay after block before counter-attacking
+@export var attack_cooldown_duration: float = 0.8 # Time to wait after a combo before re-approaching
 
 @onready var ray_cast = $RayCast2D
 
@@ -26,13 +27,14 @@ var is_roaming = false
 var roam_target = Vector2.ZERO
 var state_timer = 0.0
 var roam_pause_timer = 0.0
+var attack_cooldown_timer = 0.0
 
-var max_health_val: float = 320.0
+var max_health_val: float = 192.0
 var next_stagger_breaker_hp: float = 0.0
 
 func _ready() -> void:
 	super._ready()
-	health = 320.0 # Adjusted health
+	health = 192.0 # Reduced HP (320 * 0.6)
 	max_health_val = health
 	next_stagger_breaker_hp = max_health_val * (2.0/3.0)
 	
@@ -51,6 +53,9 @@ func _physics_process(delta: float) -> void:
 	# 1. Gravity
 	if not is_on_floor():
 		velocity += get_gravity() * gravity_multiplier * delta
+
+	if attack_cooldown_timer > 0:
+		attack_cooldown_timer -= delta
 
 	# 2. Player Awareness
 	if is_instance_valid(target_player):
@@ -127,6 +132,11 @@ func change_state(new_state: State) -> void:
 func _evaluate_combat_logic(_delta: float) -> void:
 	if current_state == State.DEATH:
 		return
+
+	if is_line_of_sight_blocked(target_player):
+		if current_state != State.IDLE and current_state != State.ROAM:
+			change_state(State.IDLE)
+		return
 		
 	var dist = global_position.distance_to(target_player.global_position)
 	
@@ -134,7 +144,8 @@ func _evaluate_combat_logic(_delta: float) -> void:
 	# Removed random block chance to focus on HP-threshold resets
 
 	if current_state == State.IDLE or current_state == State.ROAM:
-		change_state(State.APPROACH)
+		if attack_cooldown_timer <= 0:
+			change_state(State.APPROACH)
 	elif current_state == State.APPROACH:
 		if dist <= attack_range:
 			change_state(State.PRE_ATTACK)
@@ -247,6 +258,7 @@ func _on_animation_finished() -> void:
 			if sprite.animation == "atk1":
 				_start_attack("atk2") # Combo chain
 			else:
+				attack_cooldown_timer = attack_cooldown_duration
 				change_state(State.IDLE)
 		State.DEFEND:
 			# If the defend animation finishes naturally without being hit, counter

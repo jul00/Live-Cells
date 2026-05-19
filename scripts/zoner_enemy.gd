@@ -26,11 +26,11 @@ var is_roaming = false
 var roam_pause_timer = 0.0
 var arrow_scene = preload("res://scenes/arrow.tscn")
 
-var max_health_val: float = 280.0
+var max_health_val: float = 168.0
 var next_stagger_breaker_hp: float = 0.0
 
 func _ready() -> void:
-	health = 280.0
+	health = 168.0
 	max_health_val = health
 	next_stagger_breaker_hp = max_health_val * (2.0/3.0)
 	sprite.animation_finished.connect(_on_animation_finished)
@@ -240,6 +240,11 @@ func process_evade(delta: float) -> void:
 func evaluate_combat_state() -> void:
 	if not target_player:
 		change_state(State.ROAM)
+		return
+
+	if is_line_of_sight_blocked(target_player):
+		if current_state != State.IDLE and current_state != State.ROAM:
+			change_state(State.ROAM)
 		return
 		
 	var dist = global_position.distance_to(target_player.global_position)

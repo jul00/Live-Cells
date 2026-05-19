@@ -32,6 +32,9 @@ var spawned_enemies: Array[Node2D] = []
 var vanquished_markers: Dictionary = {}
 
 func _ready() -> void:
+	# Ensure the spawner processes even when the game is paused (e.g. at the Start Menu)
+	process_mode = PROCESS_MODE_ALWAYS
+	
 	# Ensure the timer is configured
 	if not timer:
 		timer = Timer.new()
@@ -43,6 +46,11 @@ func _ready() -> void:
 	timer.start()
 
 func spawn_enemy() -> void:
+	# 0. Check Game State
+	var gm = get_node_or_null("/root/GameManager")
+	if gm and gm.current_state in [gm.State.GAME_OVER, gm.State.VICTORY]:
+		return
+
 	print("Spawner: Attempting to spawn...")
 	# 1. Clean up tracking
 	spawned_enemies = spawned_enemies.filter(func(e): return is_instance_valid(e))

@@ -154,6 +154,11 @@ func _evaluate_boss_logic() -> void:
 	if current_state in [State.HURT, State.SHOUT, State.DEATH]:
 		return
 
+	if is_line_of_sight_blocked(target_player):
+		if current_state not in [State.IDLE, State.ROAM]:
+			change_state(State.IDLE)
+		return
+
 	var dist = global_position.distance_to(target_player.global_position)
 	
 	if current_state in [State.IDLE, State.ROAM]:
@@ -187,7 +192,7 @@ func _process_idle(delta: float) -> void:
 	if state_timer > 2.0:
 		change_state(State.ROAM)
 
-func _process_roam(delta: float) -> void:
+func _process_roam(_delta: float) -> void:
 	if not is_roaming:
 		var dir = 1 if randf() > 0.5 else -1
 		roam_target = global_position + Vector2(dir * randf_range(100, 200), 0)
@@ -208,7 +213,7 @@ func _process_roam(delta: float) -> void:
 		is_roaming = false
 		change_state(State.IDLE)
 
-func _process_approach(delta: float) -> void:
+func _process_approach(_delta: float) -> void:
 	if not is_instance_valid(target_player):
 		change_state(State.IDLE)
 		return
@@ -226,14 +231,14 @@ func _process_approach(delta: float) -> void:
 func _process_combat(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 800 * delta)
 	if is_instance_valid(target_player):
-		var dir_x = 1 if target_player.global_position.x > global_position.x else -1
+		var _dir_x = 1 if target_player.global_position.x > global_position.x else -1
 
 func _process_defend(delta: float) -> void:
 	state_timer += delta
 	if state_timer > 2.0:
 		change_state(State.APPROACH)
 
-func _process_shout(delta: float) -> void:
+func _process_shout(_delta: float) -> void:
 	# Shout is mostly handled by animation completion
 	velocity.x = 0
 

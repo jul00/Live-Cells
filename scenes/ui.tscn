@@ -1,15 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://dqlcynhf1g6vh"]
+[gd_scene format=3 uid="uid://dqlcynhf1g6vh"]
 
 [ext_resource type="Script" uid="uid://c80kv77hs5kia" path="res://scripts/ui.gd" id="1_c80kv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_green"]
 bg_color = Color(0, 0.705882, 0, 1)
 
-[node name="UI" type="CanvasLayer"]
+[node name="UI" type="CanvasLayer" unique_id=598961091]
 process_mode = 3
 script = ExtResource("1_c80kv")
 
-[node name="GameHUD" type="Control" parent="."]
+[node name="GameHUD" type="Control" parent="." unique_id=1067267675]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,7 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="HealthBar" type="ProgressBar" parent="GameHUD" groups=["ui_health_bar"]]
+[node name="HealthBar" type="ProgressBar" parent="GameHUD" unique_id=683318860 groups=["ui_health_bar"]]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
@@ -29,7 +29,7 @@ max_value = 1200.0
 value = 1200.0
 show_percentage = false
 
-[node name="Label" type="Label" parent="GameHUD/HealthBar"]
+[node name="Label" type="Label" parent="GameHUD/HealthBar" unique_id=1770358327]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,7 +40,7 @@ text = "1200 / 1200"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StartMenu" type="ColorRect" parent="."]
+[node name="StartMenu" type="ColorRect" parent="." unique_id=1601170788]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -48,7 +48,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.1, 0.1, 0.1, 0.8)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="StartMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="StartMenu" unique_id=2031601185]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -63,18 +63,18 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="StartMenu/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="StartMenu/VBoxContainer" unique_id=1119671035]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "SAMURAI SURVIVOR"
+text = "Live Cells"
 horizontal_alignment = 1
 
-[node name="PlayButton" type="Button" parent="StartMenu/VBoxContainer"]
+[node name="PlayButton" type="Button" parent="StartMenu/VBoxContainer" unique_id=1195082241]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "PLAY"
 
-[node name="GameOverMenu" type="ColorRect" parent="."]
+[node name="GameOverMenu" type="ColorRect" parent="." unique_id=316504969]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,7 +83,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.3, 0.1, 0.1, 0.8)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameOverMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverMenu" unique_id=906206410]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -98,18 +98,18 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="GameOverLabel" type="Label" parent="GameOverMenu/VBoxContainer"]
+[node name="GameOverLabel" type="Label" parent="GameOverMenu/VBoxContainer" unique_id=1943679953]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "GAME OVER"
 horizontal_alignment = 1
 
-[node name="RestartButton" type="Button" parent="GameOverMenu/VBoxContainer"]
+[node name="RestartButton" type="Button" parent="GameOverMenu/VBoxContainer" unique_id=1944575911]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "RESTART"
 
-[node name="VictoryMenu" type="ColorRect" parent="."]
+[node name="VictoryMenu" type="ColorRect" parent="." unique_id=348669461]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -118,7 +118,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.1, 0.3, 0.1, 0.8)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VictoryMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VictoryMenu" unique_id=69121706]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -133,13 +133,23 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="VictoryLabel" type="Label" parent="VictoryMenu/VBoxContainer"]
+[node name="VictoryLabel" type="Label" parent="VictoryMenu/VBoxContainer" unique_id=1123174741]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "VICTORY!"
 horizontal_alignment = 1
 
-[node name="RestartButton" type="Button" parent="VictoryMenu/VBoxContainer"]
+[node name="RestartButton" type="Button" parent="VictoryMenu/VBoxContainer" unique_id=580502617]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "PLAY AGAIN"
+
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=889795979]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

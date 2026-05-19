@@ -34,12 +34,12 @@ var combo_step = 0
 var shuriken_timer = 0.0
 var shuriken_scene = preload("res://scenes/shuriken.tscn")
 
-var max_health_val: float = 360.0
+var max_health_val: float = 216.0
 var next_stagger_breaker_hp: float = 0.0
 
 func _ready() -> void:
 	super._ready()
-	health = 360.0
+	health = 216.0
 	max_health_val = health
 	next_stagger_breaker_hp = max_health_val * (2.0/3.0)
 	hitbox_profiles = {
@@ -140,9 +140,10 @@ func change_state(new_state: State) -> void:
 				var am = get_node_or_null("/root/AudioManager")
 				if am:
 					am.play_sfx("dash")
-				var dir_away = -1 if target_player.global_position.x > global_position.x else 1
+				var dir_to_player = sign(target_player.global_position.x - global_position.x)
+				var dir_away = -dir_to_player
 				velocity.x = dir_away * evade_speed
-				_update_facing(-dir_away) # Face the player while moving away
+				_update_facing(dir_to_player) # Face the player while moving away
 				sprite.play("run")
 			else:
 				change_state(State.IDLE)
@@ -153,6 +154,11 @@ func change_state(new_state: State) -> void:
 
 
 func _evaluate_combat_state() -> void:
+	if is_line_of_sight_blocked(target_player):
+		if current_state != State.IDLE and current_state != State.ROAM:
+			change_state(State.IDLE)
+		return
+
 	var dist = global_position.distance_to(target_player.global_position)
 	shuriken_timer -= get_physics_process_delta_time()
 	
@@ -186,8 +192,8 @@ func _process_roam(_delta: float) -> void:
 		is_roaming = true
 		_update_facing(dir)
 
-	var move_dir = 1 if sprite.flip_h else -1
-	velocity.x = move_dir * speed
+	var move_dir = -1 if sprite.flip_h else 1
+	velocity.x = move_dir * roam_speed
 
 	if (is_on_floor() and not ray_cast.is_colliding()) or is_on_wall():
 		velocity.x = 0
@@ -351,12 +357,11 @@ func _on_detection_area_body_exited(body: Node2D) -> void:
 func _update_facing(dir_x: float) -> void:
 	if dir_x == 0: return
 	var wants_left = dir_x < 0
-	if sprite.flip_h != wants_left:
-		sprite.flip_h = wants_left
-		# Shoto native faces RIGHT. flip_h=true is LEFT.
-		# If wants_left (true), ray should be on the left (-15).
-		ray_cast.position.x = -15 if wants_left else 15
-		update_combat_facing()
+	sprite.flip_h = wants_left
+	# Shoto native faces RIGHT. flip_h=true is LEFT.
+	# If wants_left (true), ray should be on the left (-15).
+	ray_cast.position.x = -15 if wants_left else 15
+	update_combat_facing()
 
 func _update_animations() -> void:
 	if current_state in [State.COMBAT, State.DASH_ATTACK, State.DEFEND, State.THROW, State.HURT, State.EVADE, State.DEATH]:

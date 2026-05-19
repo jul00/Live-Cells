@@ -135,6 +135,19 @@ func handle_death(spawn_pos: Vector2):
 			lm.spawn_loot(spawn_pos)
 		)
 
+func is_line_of_sight_blocked(target: Node2D) -> bool:
+	if not is_instance_valid(target):
+		return true
+		
+	var space_state = get_world_2d().direct_space_state
+	# Cast from our center (-16 height) to target center (-16 height)
+	var query = PhysicsRayQueryParameters2D.create(global_position + Vector2(0, -16), target.global_position + Vector2(0, -16))
+	query.collision_mask = 1 # Only check Layer 1 (Terrain)
+	query.exclude = [self, target]
+	
+	var result = space_state.intersect_ray(query)
+	return result.is_empty() == false
+
 func perform_look_around():
 	await get_tree().create_timer(0.5).timeout
 	if is_dead or not sprite: return

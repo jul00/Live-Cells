@@ -23,7 +23,7 @@ var is_sliding = false
 func _ready() -> void:
 	super._ready()
 	faces_left_by_default = true
-	health = 480.0
+	health = 288.0
 	hitbox_profiles = {
 		"atk1": {"pos": Vector2(20, -36), "size": Vector2(70, 70), "damage": 120.0},
 		"atk2": {"pos": Vector2(25, -36), "size": Vector2(60, 60), "damage": 120.0}
@@ -98,6 +98,11 @@ func change_state(new_state: State) -> void:
 			sprite.play("die")
 
 func _evaluate_combat_state() -> void:
+	if is_line_of_sight_blocked(target_player):
+		if current_state != State.IDLE and current_state != State.ROAM:
+			change_state(State.IDLE)
+		return
+
 	var dist = global_position.distance_to(target_player.global_position)
 	
 	if current_state == State.IDLE or current_state == State.ROAM:
