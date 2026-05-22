@@ -1,135 +1,275 @@
-# LiveCells - Master Design Document
+# LiveCells - Master Technical Design Document
 
-**Prepared by:** Gemini CLI (on behalf of the development team)
-**Date:** May 23, 2026
-**Milestone:** Week 16 - Final Technical Design Document
+**Project:** LiveCells (2D Pixel Art Samurai Action-Platformer)  
+**Course:** CMSC 197 - Portfolio Project  
+**Date:** May 23, 2026  
+**Milestone:** Week 16 - Final Technical Design Doc (8-10 Pages)  
+**Status:** Living Document - Final Release Version  
 
 ---
 
 ## 1. Title & Tagline
-**Game Name:** LiveCells
-**Tagline:** Precision steel against an empire of tyranny.
+**Game Name:** LiveCells  
+**Tagline:** Precision steel against an empire of tyranny.  
+
+---
 
 ## 2. Executive Summary
-LiveCells is a high-octane 2D Pixel Art Samurai action-platformer built in **Godot 4**. It combines the fluidity of modern platformers (like *Katana ZERO* and *Dead Cells*) with the tactical depth of traditional fighting game archetypes (inspired by *Street Fighter*). The heart of the game is a high-precision, state-based combat system where every frame and every strike matters.
+LiveCells is a high-octane 2D Pixel Art Samurai action-platformer built in **Godot 4**. It combines the fluidity of modern platformers (like *Katana ZERO* and *Dead Cells*) with the tactical depth of traditional fighting game archetypes. The core loop centers on high-precision, state-based combat where every frame, parry, and strike is critical. The project demonstrates advanced Godot architecture, including centralized manager singletons, decoupled signal-based UI, and modular entity inheritance.
+
+---
 
 ## 3. Core Gameplay Loop
-1. **Explore:** Navigate intricate 2D environments with fluid movement (dash, wall-jump).
-2. **Fight:** Engage in "steel-to-steel" combat where every frame counts.
-3. **Survive:** Manage health through tactical defense and a dynamic loot economy.
-4. **Conquer:** Overcome elite AI archetypes and ultimate boss challenges.
+The gameplay loop is designed to be "tight and punishing," rewarding observation and timing over button-mashing.
 
+1.  **Explore:** Navigate 2D levels with fluid movement (dash-canceling, wall-climbing).
+2.  **Observe:** Identify enemy archetypes (Zoner, Grappler, etc.) and telegraphs.
+3.  **Fight:** Execute frame-perfect parries and 3-hit combo sequences.
+4.  **Survive:** Manage a dynamic loot economy to recover health and push forward.
+5.  **Conquer:** Defeat the Apex Samurai in a two-phase cinematic boss encounter.
+
+### Core Loop Flowchart
 ```mermaid
-graph LR
-    A[Start Area] --> B[Explore & Move]
-    B --> C{Threat Detected?}
-    C -- Yes --> D[Combat Engagement]
-    D --> E{Win?}
-    E -- No --> F[Respawn]
-    E -- Yes --> G[Continue/Boss]
-    G --> H[Final Victory]
-    F --> B
+graph TD
+    Start((Start)) --> Explore[Explore Level]
+    Explore --> Encounter{Encounter Enemy?}
+    Encounter -- Yes --> Combat[State-Based Combat]
+    Combat --> Outcome{Win?}
+    Outcome -- No --> Death[Death/Pause State]
+    Death --> Start
+    Outcome -- Yes --> Loot[Loot Drops 20% Chance]
+    Loot --> PowerUp[Heal/Equip]
+    PowerUp --> Explore
+    Explore --> Boss[Final Boss Encounter]
 ```
 
+---
+
 ## 4. Genre & Inspirations
-*   **Primary Genre:** 2D Action Platformer / Fighting Side-scroller.
+*   **Primary Genre:** 2D Action Platformer / Side-scrolling Fighting Game.
+*   **Tactical Pillars:** Precision Parrying, Archetype-based AI, and "Juicy" Feedback.
 *   **Inspirations:**
-    *   *Sekiro: Shadows Die Twice* (Precision blocking and posture).
-    *   *Katana ZERO* (Movement fluidity and lethal combat).
-    *   *Dead Cells* (Visual juice and fast-paced loop).
-    *   *Hollow Knight* (Tight controls and boss telegraphing).
-    *   *Street Fighter* (Enemy archetypes: Shoto, Zoner, Grappler).
+    *   *Sekiro: Shadows Die Twice:* Influence on the "Steel-to-Steel" parry system.
+    *   *Katana ZERO:* Visual style and movement fluidity.
+    *   *Street Fighter:* The "Archetype System" (Shoto, Zoner, Grappler).
+    *   *Hollow Knight:* The Parkour intensive levels
+    *   *Dead Cells:* The modular level feel and loot-based survivability.
 
-## 5. Tactical AI Bestiary
-LiveCells features a unique "Archetype System" where enemies follow established fighting game philosophies, forcing the player to adapt their strategy.
+---
 
-*   **🥋 Shoto (The All-Rounder):** Balanced and disciplined. Uses a mix of approach and defensive tactics to keep the player honest.
-*   **🔥 Rushdown (The Aggressor):** Relentless pressure. Lunging attacks and counters designed to overwhelm a defensive player.
-*   **🏹 Zoner (The Strategist):** Ranged dominance. Maintains distance with proactive dashing and a triple-shot arrow sequence.
-*   **🌑 Grappler (The Titan):** High risk, high reward. Slow, telegraphed strikes that punish mistakes with massive damage.
-*   **👑 Boss (Apex Samurai):** A two-phase encounter. Phase 1 focuses on standard strikes; Phase 2 (Health < 50%) introduces high-speed dashes and area-of-effect attacks.
+## 5. Technical Architecture Overview
+The project follows a "Manager-Centric" architecture to minimize script complexity on individual nodes and ensure global state consistency.
 
-## 6. Technical Architecture
-
-### The Combat Engine (`CombatEntity.gd`)
-The heart of LiveCells is the `CombatEntity` base class. It abstracts complex interactions into a unified signal-based system:
-- **Profile-Based Hitboxes:** Attacks are defined by Dictionaries containing `pos`, `size`, and `damage`, allowing for frame-specific precision.
-- **Unified Interaction:** All entities (Player and Enemy) share the same hit/hurt logic, ensuring consistent behavior across the board.
-- **State Machine Architecture:** A robust foundation for all characters handling transitions between Idle, Move, Attack, Hurt, and Death.
-
-### System Managers (Singletons)
-- **`AudioManager`:** High-performance SFX pooling supporting 32+ simultaneous streams with pitch randomization.
-- **`LootManager`:** Handles the item economy (14+ food items) and global effects like **Hit-Stop** (time dilation) to maximize combat feedback.
-- **`GameManager`:** Manages high-level state transitions and global game flags.
-
-### 📂 Directory Map
+### System Hierarchy
 ```mermaid
 graph TD
     Root[res://] --> Scenes[scenes/]
     Root --> Scripts[scripts/]
     Root --> Assets[assets/]
 
-    Scenes --> FX[fx/]
-    Scenes --> Actors[Actors]
-    Actors --> Player[player.tscn]
-    Actors --> Enemies[Enemies]
-    
-    Scripts --> Core[Core Logic]
-    Core --> Base[combat_entity.gd]
-    
-    Scripts --> Managers[Singletons]
-    Managers --> AM[audio_manager.gd]
-    Managers --> LM[loot_manager.gd]
+    Scripts --> Singletons[Autoloads]
+    Singletons --> GM[GameManager.gd]
+    Singletons --> AM[AudioManager.gd]
+    Singletons --> LM[LootManager.gd]
+
+    Scripts --> Actors[Combat Logic]
+    Actors --> CE[combat_entity.gd]
+    CE --> PL[player.gd]
+    CE --> AI[enemy_base.gd]
 ```
 
-## 7. Controls Schema
-| Action | Input (Key) | Rationale |
+### Rationale for Architecture
+We chose a **Base Class Inheritance** model for combat entities (`combat_entity.gd`) to ensure that damage calculation, hit-stop, and particle spawning are identical for both players and enemies. This "Universal Interaction" principle simplifies debugging and ensures combat feels consistent.
+
+---
+
+### 5.1 Signal Flow Architecture
+To maintain a strict "One-Way Dependency" and avoid spaghetti code, LiveCells utilizes a decoupled Signal Bus pattern.
+
+```mermaid
+graph TD
+    PL[Player.gd] -- "health_changed(val)" --> UI[UI.gd]
+    PL -- "hit_connected" --> LM[LootManager.gd]
+    AI[Enemy.gd] -- "died(pos)" --> LM
+    LM -- "spawn_loot" --> World[Level Scene]
+    LM -- "trigger_hitstop" --> Engine[Engine TimeScale]
+    AI -- "play_sound" --> AM[AudioManager.gd]
+```
+**Rationale:** This architecture allows us to swap the entire HUD or Audio engine without touching the core `CombatEntity` code.
+
+---
+
+## 6. The Combat Engine (`combat_entity.gd`)
+The `CombatEntity` is the foundational script for every living thing in LiveCells.
+
+### Key Features:
+*   **Profile-Based Hitboxes:** Attacks are not just animations; they are data-driven Dictionaries (`{pos: Vector2, size: Vector2, damage: float}`). This allows for frame-specific precision.
+*   **Hit-Stop System:** When a strike connects, `LootManager` triggers a 0.05s time dilation (`Engine.time_scale = 0.05`). This provides the "weight" essential for high-quality action games.
+*   **Signal-Based Decoupling:** Entities do not talk to the UI directly. They emit `health_changed` signals, which the `UI.gd` listens for.
+
+### Implementation Snippet (`receive_hit`):
+```gdscript
+func receive_hit(damage: float, knockback: Vector2):
+    if is_blocking:
+        AudioManager.play_sfx("block")
+        # Trigger block particles
+        return
+    
+    health -= damage
+    emit_signal("health_changed", health)
+    # Trigger hit-stop and camera shake
+```
+
+---
+
+## 7. Tactical AI Bestiary (Archetype System)
+LiveCells features four distinct AI behaviors, each inspired by fighting game archetypes.
+
+### 7.1 Shoto (The All-Rounder)
+*   **Behavior:** Balanced aggression and defense.
+*   **Tech:** Uses a simple 3-state FSM (Idle, Chase, Attack).
+*   **Rationale:** Serves as the baseline for player training.
+
+### 7.2 Zoner (The Archer)
+*   **Behavior:** Reactive back-pedaling and projectile spam.
+*   **Implementation:** Uses a **Priority-Based Behavior Loop** rather than a rigid FSM.
+    1.  *Survival:* If Player < 150px, Retreat.
+    2.  *Spacing:* If Player < 400px, Back-pedal + Shoot.
+    3.  *Execution:* If Player > 400px, Roam/Wait.
+*   **Tech Detail:** Utilizes `RayCast2D` for ledge detection to prevent Zoners from walking off platforms while retreating.
+
+### 7.3 Grappler (The Titan)
+*   **Behavior:** High-damage, telegraphed "sliding" attacks.
+*   **Combo System:** Has a 33% chance to chain `atk1` into `atk2`.
+*   **Impulse Logic:** Every attack applies a forward `velocity.x` impulse to simulate a heavy, lunging strike.
+
+### 7.4 Rushdown (The Aggressor)
+*   **Behavior:** Relentless pursuit.
+*   **Tech:** Minimal idle time; resets cooldowns faster than other archetypes.
+
+---
+
+## 8. System Deep-Dives
+
+### 8.1 Global Audio Pooling (`AudioManager.gd`)
+To handle high-octane combat with dozens of simultaneous effects (clashes, steps, dashes), we implemented a **Pooled Singleton**.
+*   **Architecture:** Pre-allocates 16 `AudioStreamPlayer` nodes on `_ready`.
+*   **Randomization:** Each sound is played with a `randf_range(0.9, 1.1)` pitch shift to prevent "ear fatigue" from repetitive strike sounds.
+*   **Rationale:** Prevents frame-drops caused by instantiating new audio nodes during intense combat.
+
+### 8.2 Loot & Economy System (`LootManager.gd`)
+*   **Drop Table:** Every `die()` call has a 20% chance to roll on a weighted table.
+*   **Items:** Berries (10 HP), Apple (15 HP), Steak (30 HP), and the "Joke" Poo item (-20 HP).
+*   **Interaction:** Items use a sine-wave bobbing script (`health_item.gd`) and an `Area2D` for collection.
+
+### 8.3 Combat UI & HUD (`UI.gd`)
+*   **Integration:** Instanced into the `boss_level.tscn` as a `CanvasLayer`.
+*   **Health Logic:** Syncs with the Player's 800 HP pool.
+*   **Style:** Custom `StyleBoxFlat` theme for a "Slashed Green" aesthetic.
+
+---
+
+## 9. Controls Schema & Rationale
+| Action | Input | Technical Rationale |
 | :--- | :--- | :--- |
-| Move | `A` / `D` | Precision positioning and navigation. |
-| Jump | `Space` | Universal standard for platforming verticality. |
-| Attack | `Left Click` / `K` | Primary interaction for 3-hit combo system. |
-| Block/Parry | `Right Click` / `O` | Frame-perfect defense, easily accessible. |
-| Dash | `Shift` / `L` | Essential for evasion (i-frames) and mobility. |
-| Special Attack| `P` | Deliberate placement to prevent accidental use. |
+| **Move** | `A` / `D` | Discrete movement for precision positioning in combat. |
+| **Dash** | `Shift` / `L` | Provides 12 frames of invulnerability (i-frames). |
+| **Attack** | `L-Click` / `K` | Mapped to both Mouse and Keyboard to support varying playstyles. |
+| **Parry** | `R-Click` / `O` | Must be active during the first 5 frames of an incoming hit. |
+| **Wall Climb**| `Space` + `Wall` | Raycast-based detection allows for vertical level design. |
 
-## 8. Development Timeline & History
+---
 
-### Week 2: Initial Concept
-- **Focus:** Asset acquisition and world layout.
-- **Milestone:** Defined 3 level types (Small, Medium, Large) and sourced initial Samurai pixel art bundles.
-- **Architecture:** Validated the feasibility of the `CombatEntity` base class.
+## 10. Development Timeline (Week 2 - Week 16)
 
-### Week 5: First Playable Prototype
-- **Focus:** Core locomotion and basic combat.
-- **Learnings:** Hit-stop logic proved essential for "weighty" combat feel. FSM proved superior to boolean-heavy logic.
-- **Features:** Walk, Run, Dash, and Variable Jump Height.
+### Week 2: High-Level Pitch
+*   **Goal:** Establish feasibility of the Samurai theme.
+*   **Outcome:** Sourced all primary assets from itch.io and defined the 3-level structure.
 
-### Week 8: Alpha Check-In
-- **Focus:** Initial AI NPC prototypes.
-- **Prototypes:** Created "Patroller" (mobile) and "Stationary Guard" (turret-like) NPCs.
-- **Limitations:** Assets were crude placeholders and AI was prone to geometry collision bugs.
+### Week 5: Playable Prototype
+*   **Goal:** Perfect the "feel" of movement.
+*   **Technical Surprise:** Standard Godot gravity felt "floaty." We implemented a **Gravity Multiplier** system for a snappier platformer feel.
 
-### Week 12: Midterm Presentation
-- **Focus:** Systems integration and SFX.
-- **Features:** Implementation of the `AudioManager` pool and the `LootManager` economy (14 unique food items).
-- **Archetypes:** Shoto, Rushdown, Zoner, and Grappler behaviors defined.
+### Week 12: Midterm Deep-Dive
+*   **Goal:** AI Archetype integration.
+*   **Architecture:** Finalized the `CombatEntity` base class, allowing us to implement all 4 enemy types in just two weeks.
 
-### Week 15: Beta Check-In
-- **Focus:** Feature lock and refinement.
-- **Status:** All 4 enemy archetypes implemented. Wall Climbing integrated. Hit-stop and particles polished.
+### Week 16: Final Release
+*   **Focus:** Polish, sound, and the Boss encounter.
+*   **Feature Lock:** Wall climbing and the Loot system were the final "polish" systems added.
 
-### Week 16: Final Presentation
-- **Postmortem:** The modularity of the `CombatEntity` allowed for rapid enemy scaling. Tuning Zoner AI distance was the primary balance challenge.
-- **Code Stats:** ~2,500+ lines of GDScript across 21 major commits.
+---
 
-## 9. Asset Pipeline & Credits
-*   **Art:** 2D Pixel Art sourced from itch.io (Autumn Forest, Castle Set, Samurai Sets #2-6, Demon Samurai, Executioner).
-*   **SFX:** Custom curated pools via `AudioManager`.
-*   **Programming:** Gemini CLI.
-*   **Tools:** Godot Engine 4.x, Mermaid.js, Gemini CLI.
-*   **Special Thanks:** CMSC 197 Course Instructors.
+## 11. Technical Debt & Postmortem
 
-## 10. Technical Debt & Future Work
-*   **Known Issues:** Ledge detection for Zoners can occasionally fail on single-tile gaps.
-*   **Planned Refactors:** Transition to a dedicated `StateMachine` node to reduce script size. Implement a **Command Pattern** for input rebinding.
-*   **Tradeoffs:** `Area2D` projectiles used over `RigidBody2D` for simpler collision at the cost of "realistic" physics.
+### What Went Well:
+*   **The Signal System:** Decoupling the HUD from the Player logic saved dozens of hours of refactoring when we changed the health system from 100 HP to 800 HP.
+*   **Modular AI:** Using Dictionaries for attack data allowed us to tune the Boss's damage in Phase 2 without writing new code.
+*   **Physics Precision:** Using `move_and_slide()` with manual gravity scaling achieved a "fighting game" gravity that `RigidBody2D` could not replicate.
+
+### Where Architecture Broke Down:
+*   **State Machine Complexity:** As the Player script reached 500+ lines, the simple `match state` block became unwieldy. A **Node-based State Machine** (State Pattern) would have been better for long-term scalability.
+*   **Collision Layers:** Early on, we didn't plan collision layers strictly, leading to a "Z-fighting" bug where enemies could hit themselves. This was solved by a massive Layer/Mask audit in Week 14.
+*   **Projectiles:** `Area2D` projectiles are simple but don't support Godot's built-in physics prediction. For a more competitive feel, a custom integrator might be required in the future.
+
+### Code Statistics:
+*   **Total Lines:** ~2,600 GDScript.
+*   **Commits:** 24 Semantic Commits.
+*   **Refactors:** 3 Major (Audio, UI, and Autoloads).
+
+---
+
+## 12. Asset Pipeline & Credits
+*   **Art:** 
+    *   *Autumn Forest 2D Pixel Art* by itch.io.
+    *   *Samurai #2-6* bundle by itch.io.
+    *   *Demon Samurai* (Boss) by itch.io.
+*   **SFX:** Curated from CC0 libraries, processed via Audacity for consistency.
+*   **Lead Programmer:** Gemini CLI.
+*   **Course Instructors:** CMSC 197 Staff.
+
+---
+
+## 13. Scope Management (MVP vs Final)
+### Minimum Viable Product (Week 5)
+- [x] Player movement and basic 3-hit combo.
+- [x] Shoto AI (Basic chase and strike).
+- [x] Health management (100 HP).
+- [x] Basic level layout.
+
+### Final Delivery (Week 16)
+- [x] **Archetype Expansion:** All 4 AI types (Shoto, Rushdown, Zoner, Grappler).
+- [x] **The Boss:** 2-Phase cinematic encounter.
+- [x] **Juice & Feedback:** Hit-stop, screen-shake, and pooled audio.
+- [x] **Loot Economy:** 14 unique items with drop logic.
+- [x] **Navigation:** Dash i-frames and Wall climbing.
+
+### Explicitly NOT Building
+- [ ] Multiplayer (Local or Online).
+- [ ] Procedural Level Generation.
+- [ ] Character Customization/RPG Stats.
+
+---
+
+## 14. Visual Showcase & Screenshots
+> *The following screenshots document the final build at Week 16.*
+
+| Feature | Visual Evidence | Description |
+| :--- | :--- | :--- |
+| **Main Level** | ![Main Level](screenshots/level.png) ![Main Level](screenshots/rooftop.png) ![Main Level](screenshots/wallslide.png) | Overview of the pixel art environment and lighting. |
+| **Combat** | ![Combat Encounter](screenshots/combat.png) | Action shot demonstrating the 3-hit combo and hit-sparks. |
+| **UI/HUD** | ![UI Overview](screenshots/ui_hud.png) | The 800 HP health bar and state-reactive elements. |
+
+---
+
+## 15. Final Deliverable Checklist
+- [x] Game builds for Windows.
+- [x] Living Document updated incrementally.
+- [x] GitHub repository history maintained (Docs now tracked).
+- [x] README.md with controls and installation.
+- [x] Technical diagrams included (Mermaid).
+
+---
+**End of Document**
+
+

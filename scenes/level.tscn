@@ -1228,7 +1228,7 @@ spawn_interval = 3.0
 spawn_width = 500.0
 
 [node name="Player" parent="." unique_id=1856583299 instance=ExtResource("2")]
-position = Vector2(7558, -4094)
+position = Vector2(-1.0000002, -4.5474735e-13)
 
 [node name="Boss" parent="." unique_id=1150586274 instance=ExtResource("5")]
 position = Vector2(14464.999, -8160)
