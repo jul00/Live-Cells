@@ -4,7 +4,5 @@
 
 # Ignored folders
 addons/
-docs/
 node_modules/
-livdocs.pdf
 TODO.md

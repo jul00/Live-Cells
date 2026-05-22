@@ -207,3 +207,12 @@ graph LR
 Special thanks to the following creators:
 - **Art:** itch.io samurai bundles (raou).
 - **Music/SFX:** Custom curated pools.
+
+## Assets:
+- https://www.youtube.com/shorts/1GwOKlggHWI
+- https://www.youtube.com/results?search_query=japanese+background+music+for+vlog
+- https://www.youtube.com/watch?v=pqEn9icjK0I
+- https://www.youtube.com/watch?v=Ds9zM_tfTKA
+- https://raou.itch.io/dark-dun
+- https://itch.io/s/110075/samurai-bundle-2d-pixel-art
+- https://free-game-assets.itch.io/free-pixel-art-cloud-and-sky-backgrounds

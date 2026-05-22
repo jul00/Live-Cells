@@ -1,0 +1,113 @@
+# AudioManager Singleton Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Create a global manager that handles randomized sound effects and permits overlapping audio playback through a player pool.
+
+**Architecture:** A global Singleton (Autoload) that preloads audio streams into a categorized library and manages a pool of `AudioStreamPlayer` nodes for concurrent playback.
+
+**Tech Stack:** Godot 4 (GDScript), `AudioStreamPlayer`, Autoload.
+
+**Date:** April 2026 (Week 12)
+
+---
+
+### Task 1: Create AudioManager Script
+
+**Files:**
+- Create: `scripts/audio_manager.gd`
+- Test: Manual verification via script validation and registration check.
+
+- [ ] **Step 1: Write the AudioManager script**
+
+```gdscript
+extends Node
+
+# Dictionary containing preloaded audio streams categorized by name
+var libs: Dictionary = {
+	"hit": [
+		preload("res://assets/SFX/cut1.mp3"),
+		preload("res://assets/SFX/cut2.mp3"),
+		preload("res://assets/SFX/cut3.mp3")
+	],
+	"block": [
+		preload("res://assets/SFX/block1.mp3"),
+		preload("res://assets/SFX/block2.mp3"),
+		preload("res://assets/SFX/block3.mp3"),
+		preload("res://assets/SFX/block4.mp3")
+	],
+	"dash": [
+		preload("res://assets/SFX/dash.mp3")
+	],
+	"item_spawn": [
+		preload("res://assets/SFX/item_drop.wav")
+	],
+	"item_collect": [
+		preload("res://assets/SFX/item_pickup.wav")
+	]
+}
+
+# Pool of AudioStreamPlayers
+var players: Array[AudioStreamPlayer] = []
+const POOL_SIZE = 16
+
+func _ready() -> void:
+	# Ensure sounds play even when the game is paused
+	process_mode = PROCESS_MODE_ALWAYS
+	
+	# Initialize the player pool
+	for i in range(POOL_SIZE):
+		var asp = AudioStreamPlayer.new()
+		add_child(asp)
+		players.append(asp)
+
+## Plays a random sound effect from the specified library with pitch randomization.
+func play_sfx(lib_name: String, p_min: float = 0.9, p_max: float = 1.1) -> void:
+	if not libs.has(lib_name):
+		push_warning("AudioManager: Library '%s' not found." % lib_name)
+		return
+	
+	var stream_list: Array = libs[lib_name]
+	if stream_list.is_empty():
+		return
+		
+	# Pick a random stream from the requested library
+	var random_stream: AudioStream = stream_list.pick_random()
+	
+	# Find the first AudioStreamPlayer that is not playing
+	var player: AudioStreamPlayer = _get_available_player()
+	if player:
+		player.stream = random_stream
+		player.pitch_scale = randf_range(p_min, p_max)
+		player.play()
+	else:
+		push_warning("AudioManager: Player pool exhausted (all %d players are busy)." % POOL_SIZE)
+
+func _get_available_player() -> AudioStreamPlayer:
+	for p in players:
+		if not p.playing:
+			return p
+	return null
+```
+
+- [ ] **Step 2: Validate the script**
+
+Run: `mcp_godot_validate_script(path="res://scripts/audio_manager.gd")`
+Expected: No errors.
+
+- [ ] **Step 3: Register as Autoload**
+
+Run: `mcp_godot_setup_autoload(operation="add", name="AudioManager", path="res://scripts/audio_manager.gd")`
+Expected: Success message.
+
+- [ ] **Step 4: Verify Autoload registration**
+
+Run: `mcp_godot_setup_autoload(operation="list")`
+Expected: `AudioManager` appears in the list.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add scripts/audio_manager.gd project.godot
+git commit -m "feat: implement AudioManager with sound pool and randomization"
+```
